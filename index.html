@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fafafa" />
+    <title>顏文字 · Kaomoji</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <a class="logo" href="#top" aria-label="顏文字首頁">顏文字<span>·</span></a>
+        <label class="header-search" for="search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="search-input" type="search" placeholder="搜尋" autocomplete="off" />
+        </label>
+      </div>
+    </header>
+
+    <main id="top" class="main-content">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">KAOMOJI LIBRARY</p>
+        <h1 id="page-title">想說的，用一個表情就好。</h1>
+        <p>搜尋、點擊、複製。沒有多餘的事。</p>
+        <label class="hero-search" for="hero-search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="hero-search-input" type="search" placeholder="搜尋顏文字... 例如：貓、哭、招手、愛心" autocomplete="off" />
+          <button class="clear-search" type="button" aria-label="清除搜尋">清除</button>
+        </label>
+        <div class="suggestions" aria-label="常用搜尋">
+          <span>試試看</span>
+          <button type="button">貓</button><button type="button">打招呼</button><button type="button">加油</button><button type="button">晚安</button>
+        </div>
+      </section>
+
+      <nav class="category-bar" aria-label="顏文字分類">
+        <div id="categories" class="categories"></div>
+      </nav>
+
+      <section class="list-section" aria-live="polite">
+        <div class="list-heading">
+          <div><p id="list-title">全部顏文字</p><span id="category-description">從今天的心情開始挑選。</span></div>
+          <span id="result-count"></span>
+        </div>
+        <div id="kaomoji-list" class="kaomoji-list"></div>
+        <div id="empty-state" class="empty-state" hidden>
+          <p>找不到相符的顏文字</p>
+          <button type="button" id="reset-button">清除搜尋</button>
+        </div>
+      </section>
+    </main>
+
+    <template id="kaomoji-template">
+      <article class="kaomoji-row">
+        <button class="kaomoji-copy" type="button" aria-label="複製顏文字">
+          <span class="kaomoji-main"><span class="kaomoji-text"></span><span class="copied-text" aria-hidden="true">✓ 已複製</span></span>
+          <span class="kaomoji-tags"></span>
+        </button>
+        <button class="favorite-button" type="button" aria-label="加入收藏">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 20-1.45-1.32C5.4 14.02 2 10.94 2 7.15 2 4.07 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09A6.05 6.05 0 0 1 16.5 2C19.58 2 22 4.07 22 7.15c0 3.79-3.4 6.87-8.55 11.54L12 20Z"></path></svg>
+        </button>
+      </article>
+    </template>
+
+    <script src="./script.js"></script>
+  </body>
+</html>
