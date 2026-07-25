@@ -53,6 +53,8 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
 .suggestions span { color: #aaa; font-size: 12px; }
 .suggestions button { border: 0; border-bottom: 1px solid transparent; background: transparent; padding: 3px 0; color: var(--muted); font-size: 13px; transition: color 200ms ease-out, border-color 200ms ease-out; }
 .suggestions button:hover { border-color: var(--text); color: var(--text); }
+.suggestions .random-button { margin-left: 4px; border: 1px solid var(--border); border-radius: 99px; padding: 5px 10px; color: var(--text); }
+.suggestions .random-button:hover { border-color: var(--text); }
 
 .category-bar { position: sticky; top: 68px; z-index: 5; margin: 0 calc((100vw - min(1200px, calc(100vw - 40px))) / -2); padding: 0 max(20px, calc((100vw - 1200px) / 2)); background: color-mix(in srgb, var(--bg) 94%, transparent); backdrop-filter: blur(10px); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .categories { display: flex; gap: 27px; overflow-x: auto; scrollbar-width: none; white-space: nowrap; }
@@ -60,31 +62,49 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
 .category-button { position: relative; flex: none; border: 0; background: transparent; color: var(--muted); padding: 16px 0 14px; font-size: 14px; transition: color 200ms ease-out; }
 .category-button:hover, .category-button.active { color: var(--text); }
 .category-button.active::after { content: ""; position: absolute; height: 1.5px; background: var(--text); inset: auto 0 0; }
+.filter-panel { margin: 0 0 4px; padding: 22px 0 2px; border-bottom: 1px solid var(--border); }
+.filter-group { display: flex; align-items: baseline; gap: 18px; padding: 0 0 16px; }
+.filter-group > span { width: 54px; flex: none; color: #999; font-size: 12px; }
+.filter-options { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-option { border: 1px solid var(--border); border-radius: 99px; background: var(--surface); padding: 6px 10px; color: var(--muted); font-size: 13px; transition: 200ms ease-out; }
+.filter-option:hover, .filter-option.active { border-color: var(--text); color: var(--text); }
 
 .list-section { padding: 31px 0 76px; }
 .list-heading { display: flex; justify-content: space-between; align-items: flex-start; min-height: 34px; margin-bottom: 15px; }
 .list-heading p { margin: 0 0 5px; font-size: 15px; font-weight: 650; }
 .list-heading div > span { color: #999; font-size: 13px; }
 .list-heading span { color: #aaa; font-size: 13px; }
-.kaomoji-list { border-top: 1px solid var(--border); }
-.kaomoji-row { position: relative; display: flex; align-items: center; min-height: 101px; border-bottom: 1px solid var(--border); }
-.kaomoji-copy { width: 100%; min-height: 101px; display: flex; align-items: center; justify-content: space-between; gap: 24px; border: 0; background: transparent; color: var(--text); padding: 19px 62px 19px 18px; text-align: left; transition: background 200ms ease-out, padding 200ms ease-out; }
-.kaomoji-copy:hover { background: var(--surface); padding-left: 23px; box-shadow: 0 4px 18px rgba(0,0,0,.025); }
-.kaomoji-main { font-size: clamp(22px, 3.2vw, 29px); letter-spacing: .02em; }
-.kaomoji-tags { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; color: #999; font-size: 12px; }
-.kaomoji-tags i { font-style: normal; border: 1px solid var(--border); border-radius: 99px; padding: 4px 8px; }
+.list-meta { display: flex; align-items: center; gap: 10px; }
+.storage-status { border: 1px solid var(--border); border-radius: 99px; padding: 4px 7px; color: #aaa; font-size: 10px !important; }
+.kaomoji-list { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.kaomoji-row { position: relative; min-width: 0; min-height: 56px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); overflow: hidden; transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out; }
+.kaomoji-row:hover { border-color: rgba(120,120,120,.24); background: rgba(255,255,255,.58); box-shadow: 0 7px 18px rgba(0,0,0,.045); backdrop-filter: blur(13px) saturate(1.15); -webkit-backdrop-filter: blur(13px) saturate(1.15); transform: translateY(-1px); }
+.kaomoji-copy { width: 100%; min-height: 56px; display: grid; place-items: center; border: 0; background: transparent; color: var(--text); padding: 8px 26px 8px 8px; text-align: center; transition: background 200ms ease-out; }
+.kaomoji-copy:hover { background: #fdfdfd; }
+.kaomoji-main { max-width: 100%; overflow: hidden; font-size: clamp(15px, 1.35vw, 19px); letter-spacing: .01em; text-overflow: ellipsis; white-space: nowrap; }
+.kaomoji-tags { display: none; }
+.kaomoji-row:hover .kaomoji-copy { color: var(--text); }
+.kaomoji-row:hover .kaomoji-text { display: none; }
+.kaomoji-row:hover .kaomoji-tags { display: flex; position: absolute; inset: 0; align-items: center; justify-content: center; gap: 5px; padding: 7px 26px 7px 8px; color: #858585; font-size: 11px; white-space: nowrap; }
+.kaomoji-row:hover .kaomoji-tags i { font-style: normal; }
 .copied-text { display: none; color: #43805f; font-size: 14px; font-weight: 600; letter-spacing: .01em; }
 .kaomoji-row.copied .kaomoji-text { display: none; }
 .kaomoji-row.copied .copied-text { display: inline; }
-.favorite-button { position: absolute; right: 13px; border: 0; background: transparent; color: #bbb; padding: 11px; line-height: 0; opacity: 0; transition: opacity 200ms ease-out, color 200ms ease-out, transform 200ms ease-out; }
+.favorite-button { position: absolute; top: 3px; right: 3px; border: 0; background: transparent; color: #bbb; padding: 8px; line-height: 0; opacity: 0; transition: opacity 200ms ease-out, color 200ms ease-out, transform 200ms ease-out; }
 .kaomoji-row:hover .favorite-button, .favorite-button.active { opacity: 1; }
 .favorite-button svg { width: 18px; height: 18px; fill: transparent; stroke: currentColor; stroke-width: 1.6; }
 .favorite-button.active { color: #d06b77; }
+.kaomoji-row:hover .favorite-button { color: #9d9d9d; }
+.kaomoji-row:hover .favorite-button.active { color: #ff9ba5; }
 .favorite-button.active svg { fill: currentColor; }
 .favorite-button:active { transform: scale(.88); }
 .empty-state { padding: 68px 0; text-align: center; color: var(--muted); }
 .empty-state p { margin: 0 0 14px; }
 .empty-state button { border: 0; border-bottom: 1px solid #aaa; padding: 3px 0; background: transparent; color: var(--text); font-size: 14px; }
+.related-searches { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; max-width: 420px; margin: 0 auto 20px; }
+.related-searches::before { content: "也可以試試"; width: 100%; color: #aaa; font-size: 12px; }
+.related-searches button { border: 1px solid var(--border); border-radius: 99px; background: var(--surface); padding: 6px 10px; color: var(--muted); font-size: 13px; }
+.related-searches button:hover { border-color: var(--text); color: var(--text); }
 
 @media (max-width: 640px) {
   .header-content, .main-content { width: min(100% - 32px, 1200px); }
@@ -95,12 +115,18 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
   .hero-search { height: 59px; margin-top: 28px; padding-left: 17px; }
   .hero-search input { font-size: 15px; }
   .category-bar { top: 60px; margin: 0 -16px; padding: 0 16px; }
+  .filter-group { display: block; }
+  .filter-group > span { display: block; margin-bottom: 9px; }
   .categories { gap: 24px; }
   .category-button { padding-top: 14px; padding-bottom: 13px; }
   .list-section { padding-top: 25px; }
-  .kaomoji-row, .kaomoji-copy { min-height: 88px; }
-  .kaomoji-copy { padding-left: 5px; padding-right: 45px; }
-  .kaomoji-copy:hover { padding-left: 5px; }
+  .kaomoji-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+  .kaomoji-row, .kaomoji-copy { min-height: 54px; }
+  .kaomoji-main { font-size: 17px; }
   .kaomoji-tags { display: none; }
   .favorite-button { opacity: 1; }
+}
+
+@media (min-width: 641px) and (max-width: 900px) {
+  .kaomoji-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
