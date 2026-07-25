@@ -4,6 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#fafafa" />
+    <meta name="description" content="快速搜尋、收藏並複製顏文字。乾淨、安靜的 Kaomoji 工具。" />
+    <meta property="og:title" content="顏文字 · Kaomoji" />
+    <meta property="og:description" content="快速搜尋、收藏並複製顏文字。" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <title>顏文字 · Kaomoji</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
@@ -31,21 +35,24 @@
         <div class="suggestions" aria-label="常用搜尋">
           <span>試試看</span>
           <button type="button">貓</button><button type="button">打招呼</button><button type="button">加油</button><button type="button">晚安</button>
+          <button type="button" id="random-button" class="random-button">隨機複製</button>
         </div>
       </section>
 
       <nav class="category-bar" aria-label="顏文字分類">
         <div id="categories" class="categories"></div>
       </nav>
+      <section id="filter-panel" class="filter-panel" aria-label="完整分類" hidden></section>
 
       <section class="list-section" aria-live="polite">
         <div class="list-heading">
           <div><p id="list-title">全部顏文字</p><span id="category-description">從今天的心情開始挑選。</span></div>
-          <span id="result-count"></span>
+          <div class="list-meta"><span id="result-count"></span><span class="storage-status">儲存於此裝置</span></div>
         </div>
         <div id="kaomoji-list" class="kaomoji-list"></div>
         <div id="empty-state" class="empty-state" hidden>
           <p>找不到相符的顏文字</p>
+          <div id="related-searches" class="related-searches" aria-label="建議搜尋"></div>
           <button type="button" id="reset-button">清除搜尋</button>
         </div>
       </section>
