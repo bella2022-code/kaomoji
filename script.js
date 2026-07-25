@@ -193,10 +193,17 @@ data.forEach(item => {
   item.text = [...item.text].map(char => compatibilityReplacements[char] || char).join('').replace('ദ്ദി', 'd');
 });
 
-const categories = [
+const defaultCategories = [
   ['all', '全部'], ['updated', '最近更新'], ['recent', '最近使用'], ['favorites', '收藏'],
   ['動物', '動物'], ['人物', '人物'], ['手勢', '手勢'], ['愛心', '愛心'], ['符號', '符號'], ['裝飾', '裝飾'], ['more', '更多']
 ];
+function getCategoryOrder() {
+  const saved = readLocalList('kaomoji-category-order');
+  const keys = defaultCategories.map(([key]) => key);
+  const valid = saved.filter(key => keys.includes(key));
+  return [...valid, ...keys.filter(key => !valid.includes(key))];
+}
+let categories = getCategoryOrder().map(key => defaultCategories.find(([candidate]) => candidate === key));
 const categoryNames = Object.fromEntries(categories);
 const filterGroups = {
   '圖案': ['動物', '人物', '手勢', '愛心', '星星', '花朵', '食物', '天氣', '符號', '裝飾', '文字'],
@@ -227,8 +234,13 @@ const template = document.querySelector('#kaomoji-template');
 const filterPanel = document.querySelector('#filter-panel');
 const randomButton = document.querySelector('#random-button');
 const relatedSearchesEl = document.querySelector('#related-searches');
+const resetCategoryOrderButton = document.querySelector('#reset-category-order');
 let activeCategory = 'all';
 let expandedFilters = false;
+let draggedCategory = null;
+let dragOverCategory = null;
+let touchTimer = null;
+let touchReordering = false;
 function readLocalList(key) {
   try { const value = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(value) ? [...new Set(value)] : []; }
   catch { return []; }
@@ -239,6 +251,19 @@ let recents = readLocalList('kaomoji-recents');
 function save() {
   localStorage.setItem('kaomoji-favorites', JSON.stringify(favorites));
   localStorage.setItem('kaomoji-recents', JSON.stringify(recents));
+}
+
+function saveCategoryOrder() {
+  localStorage.setItem('kaomoji-category-order', JSON.stringify(categories.map(([key]) => key)));
+  resetCategoryOrderButton.hidden = categories.map(([key]) => key).join('|') === defaultCategories.map(([key]) => key).join('|');
+}
+
+function reorderCategories(fromKey, toKey) {
+  if (!fromKey || !toKey || fromKey === toKey) return;
+  const from = categories.findIndex(([key]) => key === fromKey);
+  const to = categories.findIndex(([key]) => key === toKey);
+  categories.splice(to, 0, categories.splice(from, 1)[0]);
+  saveCategoryOrder(); renderCategories();
 }
 
 window.addEventListener('storage', event => {
@@ -296,13 +321,34 @@ function renderCategories() {
   categories.forEach(([key, label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = `category-button${key === activeCategory || (key === 'more' && expandedFilters) ? ' active' : ''}`;
-    button.textContent = label; button.dataset.category = key;
+    button.textContent = label; button.dataset.category = key; button.draggable = true; button.title = '拖移以排序';
     button.addEventListener('click', () => {
+      if (touchReordering) return;
       if (key === 'more') { expandedFilters = !expandedFilters; filterPanel.hidden = !expandedFilters; renderCategories(); return; }
       activeCategory = key; expandedFilters = false; filterPanel.hidden = true; renderCategories(); renderFilters(); renderList();
     });
+    button.addEventListener('dragstart', event => { draggedCategory = key; button.classList.add('dragging'); event.dataTransfer.effectAllowed = 'move'; });
+    button.addEventListener('dragend', () => { draggedCategory = null; dragOverCategory = null; categoryEl.classList.remove('reorder-mode'); renderCategories(); });
+    button.addEventListener('dragover', event => { if (!draggedCategory || draggedCategory === key) return; event.preventDefault(); dragOverCategory = key; categoryEl.querySelectorAll('.drop-target').forEach(item => item.classList.remove('drop-target')); button.classList.add('drop-target'); categoryEl.classList.add('reorder-mode'); });
+    button.addEventListener('drop', event => { event.preventDefault(); reorderCategories(draggedCategory, key); });
+    button.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'touch') return;
+      touchTimer = window.setTimeout(() => { touchReordering = true; draggedCategory = key; categoryEl.classList.add('reorder-mode'); button.classList.add('dragging'); }, 350);
+    });
+    button.addEventListener('pointermove', event => {
+      if (!touchReordering || !draggedCategory) return;
+      event.preventDefault();
+      const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('.category-button');
+      if (target && target.dataset.category !== draggedCategory) { dragOverCategory = target.dataset.category; categoryEl.querySelectorAll('.drop-target').forEach(item => item.classList.remove('drop-target')); target.classList.add('drop-target'); }
+    });
+    button.addEventListener('pointerup', () => {
+      window.clearTimeout(touchTimer);
+      if (touchReordering) { reorderCategories(draggedCategory, dragOverCategory); touchReordering = false; draggedCategory = null; dragOverCategory = null; }
+    });
+    button.addEventListener('pointercancel', () => { window.clearTimeout(touchTimer); touchReordering = false; draggedCategory = null; dragOverCategory = null; renderCategories(); });
     categoryEl.append(button);
   });
+  saveCategoryOrder();
 }
 
 function renderFilters() {
@@ -377,6 +423,9 @@ randomButton.addEventListener('click', async () => {
   await copyItem(item.text);
   const original = randomButton.textContent; randomButton.textContent = `已複製 ${item.text}`;
   window.setTimeout(() => { randomButton.textContent = original; }, 1200);
+});
+resetCategoryOrderButton.addEventListener('click', () => {
+  categories = [...defaultCategories]; localStorage.removeItem('kaomoji-category-order'); saveCategoryOrder(); renderCategories();
 });
 document.addEventListener('keydown', event => {
   const isTyping = ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName);
