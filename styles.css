@@ -73,8 +73,10 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
 .category-button { position: relative; flex: none; border: 0; background: transparent; color: var(--muted); padding: 16px 0 14px; font-size: 14px; transition: color 200ms ease-out; }
 .category-button:hover, .category-button.active { color: var(--text); }
 .category-button.active::after { content: ""; position: absolute; height: 1.5px; background: var(--text); inset: auto 0 0; }
+.category-button { touch-action: pan-x; }
 .category-button.dragging { opacity: .35; }
 .category-button.drop-target::before { content: ""; position: absolute; top: 12px; bottom: 11px; left: -14px; width: 2px; border-radius: 2px; background: var(--text); }
+.category-button.drop-target-after::after { content: ""; position: absolute; top: 12px; bottom: 11px; right: -14px; width: 2px; border-radius: 2px; background: var(--text); }
 .category-bar.reorder-mode { cursor: grabbing; user-select: none; }
 .reset-category-order { display: block; margin: 10px 0 0 auto; border: 0; border-bottom: 1px solid #bbb; padding: 3px 0; background: transparent; color: #888; font-size: 12px; }
 .filter-panel { margin: 0 0 4px; padding: 22px 0 2px; border-bottom: 1px solid var(--border); }
