@@ -518,7 +518,9 @@ function renderCategories() {
   categories.forEach(([key, label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = `category-button${key === activeCategory || (key === 'more' && expandedFilters) ? ' active' : ''}`;
-    button.textContent = label; button.dataset.category = key; button.draggable = categoryReorderMode; button.title = categoryReorderMode ? '拖移到想放的位置' : '點「調整順序」後可拖移';
+    const text = document.createElement('span'); text.textContent = label;
+    const handle = document.createElement('span'); handle.className = 'category-drag-handle'; handle.textContent = '⠿'; handle.setAttribute('aria-hidden', 'true'); handle.draggable = categoryReorderMode;
+    button.append(text, handle); button.dataset.category = key; button.draggable = false; button.title = categoryReorderMode ? '拖曳右側把手調整位置' : '點「調整順序」後可拖移';
     button.addEventListener('click', () => {
       if (categoryReorderMode || touchReordering || suppressCategoryClick) return;
       if (key === 'more') { expandedFilters = !expandedFilters; filterPanel.hidden = !expandedFilters; renderCategories(); return; }
@@ -540,6 +542,12 @@ function renderCategories() {
         touchReordering = true; draggedCategory = key; dropAfterCategory = false;
         button.setPointerCapture?.(event.pointerId); categoryEl.classList.add('reorder-mode'); button.classList.add('dragging');
       }, 350);
+    });
+    handle.addEventListener('pointerdown', event => {
+      if (event.pointerType !== 'touch' || !categoryReorderMode) return;
+      window.clearTimeout(touchTimer); touchReordering = true; draggedCategory = key; dropAfterCategory = false;
+      handle.setPointerCapture?.(event.pointerId); categoryEl.classList.add('reorder-mode'); button.classList.add('dragging');
+      event.preventDefault(); event.stopPropagation();
     });
     button.addEventListener('pointermove', event => {
       if (!touchReordering || !draggedCategory) return;
