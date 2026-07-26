@@ -544,7 +544,7 @@ function renderCategories() {
       }, 350);
     });
     handle.addEventListener('pointerdown', event => {
-      if (event.pointerType !== 'touch' || !categoryReorderMode) return;
+      if (!categoryReorderMode) return;
       window.clearTimeout(touchTimer); touchReordering = true; draggedCategory = key; dropAfterCategory = false;
       handle.setPointerCapture?.(event.pointerId); categoryEl.classList.add('reorder-mode'); button.classList.add('dragging');
       event.preventDefault(); event.stopPropagation();
