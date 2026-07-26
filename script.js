@@ -280,8 +280,10 @@ let detailItem = null;
 let expandedFilters = false;
 let draggedCategory = null;
 let dragOverCategory = null;
+let dropAfterCategory = false;
 let touchTimer = null;
 let touchReordering = false;
+let suppressCategoryClick = false;
 function readLocalList(key) {
   try { const value = JSON.parse(localStorage.getItem(key) || '[]'); return Array.isArray(value) ? [...new Set(value)] : []; }
   catch { return []; }
@@ -309,11 +311,13 @@ function saveCategoryOrder() {
   resetCategoryOrderButton.hidden = categories.map(([key]) => key).join('|') === defaultCategories.map(([key]) => key).join('|');
 }
 
-function reorderCategories(fromKey, toKey) {
+function reorderCategories(fromKey, toKey, placeAfter = false) {
   if (!fromKey || !toKey || fromKey === toKey) return;
   const from = categories.findIndex(([key]) => key === fromKey);
-  const to = categories.findIndex(([key]) => key === toKey);
-  categories.splice(to, 0, categories.splice(from, 1)[0]);
+  let to = categories.findIndex(([key]) => key === toKey);
+  const [moved] = categories.splice(from, 1);
+  if (from < to) to -= 1;
+  categories.splice(to + (placeAfter ? 1 : 0), 0, moved);
   saveCategoryOrder(); renderCategories();
 }
 
@@ -351,7 +355,7 @@ function renderPersonalPanel() {
   if (personalView === 'collections') {
     personalPanel.append(makeToolButton('＋ 新增資料夾', createCollection, 'primary-tool'));
     const names = Object.keys(collections);
-    if (!names.length) { const note = document.createElement('p'); note.textContent = '建立資料夾，整理聊天、遊戲或撒嬌用的顏文字。'; personalPanel.append(note); }
+    if (!names.length) { const note = document.createElement('p'); note.textContent = '建立資料夾，整理聊天、遊戲或日常用的顏文字。'; personalPanel.append(note); }
     names.forEach(name => {
       const count = collections[name].length;
       const button = makeToolButton(`${name} · ${count}`, () => {
@@ -371,7 +375,7 @@ function renderPersonalPanel() {
 }
 
 function createCollection() {
-  const name = prompt('資料夾名稱（例如：聊天、遊戲、撒嬌）')?.trim();
+  const name = prompt('資料夾名稱（例如：聊天、遊戲、日常）')?.trim();
   if (!name) return;
   if (!collections[name]) collections[name] = [];
   save(); renderPersonalPanel();
@@ -446,31 +450,48 @@ function renderCategories() {
   categories.forEach(([key, label]) => {
     const button = document.createElement('button');
     button.type = 'button'; button.className = `category-button${key === activeCategory || (key === 'more' && expandedFilters) ? ' active' : ''}`;
-    button.textContent = label; button.dataset.category = key; button.draggable = true; button.title = '拖移以排序';
+    button.textContent = label; button.dataset.category = key; button.draggable = true; button.title = '拖移以排序（手機長按後拖移）';
     button.addEventListener('click', () => {
-      if (touchReordering) return;
+      if (touchReordering || suppressCategoryClick) return;
       if (key === 'more') { expandedFilters = !expandedFilters; filterPanel.hidden = !expandedFilters; renderCategories(); return; }
       activeCollection = ''; activeCategory = key; expandedFilters = false; filterPanel.hidden = true; renderCategories(); renderFilters(); renderPersonalPanel(); renderList();
     });
     button.addEventListener('dragstart', event => { draggedCategory = key; button.classList.add('dragging'); event.dataTransfer.effectAllowed = 'move'; });
-    button.addEventListener('dragend', () => { draggedCategory = null; dragOverCategory = null; categoryEl.classList.remove('reorder-mode'); renderCategories(); });
-    button.addEventListener('dragover', event => { if (!draggedCategory || draggedCategory === key) return; event.preventDefault(); dragOverCategory = key; categoryEl.querySelectorAll('.drop-target').forEach(item => item.classList.remove('drop-target')); button.classList.add('drop-target'); categoryEl.classList.add('reorder-mode'); });
-    button.addEventListener('drop', event => { event.preventDefault(); reorderCategories(draggedCategory, key); });
+    button.addEventListener('dragend', () => { draggedCategory = null; dragOverCategory = null; dropAfterCategory = false; categoryEl.classList.remove('reorder-mode'); renderCategories(); });
+    button.addEventListener('dragover', event => {
+      if (!draggedCategory || draggedCategory === key) return;
+      event.preventDefault();
+      dragOverCategory = key; dropAfterCategory = event.clientX > button.getBoundingClientRect().left + button.offsetWidth / 2;
+      categoryEl.querySelectorAll('.drop-target, .drop-target-after').forEach(item => item.classList.remove('drop-target', 'drop-target-after'));
+      button.classList.add(dropAfterCategory ? 'drop-target-after' : 'drop-target'); categoryEl.classList.add('reorder-mode');
+    });
+    button.addEventListener('drop', event => { event.preventDefault(); reorderCategories(draggedCategory, key, dropAfterCategory); });
     button.addEventListener('pointerdown', event => {
       if (event.pointerType !== 'touch') return;
-      touchTimer = window.setTimeout(() => { touchReordering = true; draggedCategory = key; categoryEl.classList.add('reorder-mode'); button.classList.add('dragging'); }, 350);
+      touchTimer = window.setTimeout(() => {
+        touchReordering = true; draggedCategory = key; dropAfterCategory = false;
+        button.setPointerCapture?.(event.pointerId); categoryEl.classList.add('reorder-mode'); button.classList.add('dragging');
+      }, 350);
     });
     button.addEventListener('pointermove', event => {
       if (!touchReordering || !draggedCategory) return;
       event.preventDefault();
       const target = document.elementFromPoint(event.clientX, event.clientY)?.closest('.category-button');
-      if (target && target.dataset.category !== draggedCategory) { dragOverCategory = target.dataset.category; categoryEl.querySelectorAll('.drop-target').forEach(item => item.classList.remove('drop-target')); target.classList.add('drop-target'); }
+      if (target && target.dataset.category !== draggedCategory) {
+        dragOverCategory = target.dataset.category; dropAfterCategory = event.clientX > target.getBoundingClientRect().left + target.offsetWidth / 2;
+        categoryEl.querySelectorAll('.drop-target, .drop-target-after').forEach(item => item.classList.remove('drop-target', 'drop-target-after'));
+        target.classList.add(dropAfterCategory ? 'drop-target-after' : 'drop-target');
+      }
     });
     button.addEventListener('pointerup', () => {
       window.clearTimeout(touchTimer);
-      if (touchReordering) { reorderCategories(draggedCategory, dragOverCategory); touchReordering = false; draggedCategory = null; dragOverCategory = null; }
+      if (touchReordering) {
+        suppressCategoryClick = true; reorderCategories(draggedCategory, dragOverCategory, dropAfterCategory);
+        touchReordering = false; draggedCategory = null; dragOverCategory = null; dropAfterCategory = false;
+        window.setTimeout(() => { suppressCategoryClick = false; }, 80);
+      }
     });
-    button.addEventListener('pointercancel', () => { window.clearTimeout(touchTimer); touchReordering = false; draggedCategory = null; dragOverCategory = null; renderCategories(); });
+    button.addEventListener('pointercancel', () => { window.clearTimeout(touchTimer); touchReordering = false; draggedCategory = null; dragOverCategory = null; dropAfterCategory = false; renderCategories(); });
     categoryEl.append(button);
   });
   saveCategoryOrder();
