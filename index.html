@@ -11,7 +11,7 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <title>顏文字 · Kaomoji</title>
-    <link rel="stylesheet" href="./styles.css?v=20260801-stable-picks" />
+    <link rel="stylesheet" href="./styles.css?v=20260801-apple-safe" />
   </head>
   <body>
     <header class="site-header">
@@ -94,12 +94,14 @@
       <p id="detail-name" class="detail-name"></p>
       <div id="detail-tags" class="detail-tags"></div>
       <div class="detail-actions">
-        <button id="detail-copy" type="button">複製</button>
+        <button id="detail-copy" type="button">複製顯示版</button>
+        <button id="detail-copy-original" type="button">複製原版</button>
+        <button id="detail-copy-safe" type="button" hidden>複製 Apple 安全版</button>
         <button id="detail-share" type="button">分享連結</button>
       </div>
       <div><p class="dialog-kicker">相似顏文字</p><div id="similar-kaomojis" class="similar-kaomojis"></div></div>
     </dialog>
 
-    <script src="./script.js?v=20260801-stable-picks"></script>
+    <script src="./script.js?v=20260801-apple-safe"></script>
   </body>
 </html>
