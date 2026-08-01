@@ -403,6 +403,55 @@ data.push(...[
   { text: 'ʕ•̫͡•ʕ*̫͡*ʕ•͓͡•ʔ-̫͡-ʕ•̫͡•ʔ*̫͡*ʔ-̫͡-ʔ', tags: ['符號', '動物', '社群'] },
 ]);
 
+// 大型字庫：只使用常見、跨平台較穩定的字元組合，並以不同的臉、動作、
+// 動物與裝飾語境建立可搜尋的顏文字。資料留在記憶體中，畫面則採分批顯示，
+// 所以手機不會因為一次繪製 50,000 個項目而變慢。
+const catalogTarget = 50000;
+const catalogSeen = new Set(data.map(item => item.text));
+const addCatalogItem = (text, tags) => {
+  if (!catalogSeen.has(text)) {
+    catalogSeen.add(text);
+    data.push({ text, tags });
+  }
+};
+const catalogFaces = [
+  '•ω•', '•‿•', '˙ω˙', '˘ω˘', '˘‿˘', '⌒ω⌒', '⌒‿⌒', '´▽`', '´•ω•`',
+  '´･ω･`', '｡•ω•｡', '｡•‿•｡', '≧▽≦', '≧ω≦', '˘‿˘', '¬‿¬', '¬_¬',
+  'ಠ_ಠ', 'ಠ‿ಠ', '⊙_⊙', '⊙ω⊙', '°□°', '￣▽￣', '￣ω￣', '・ω・',
+  '・_・', '´-ω-`', '´▽｀', '´▽`', '´∀`', '╹ω╹', '╹▽╹', '｡◕‿◕｡',
+  '◕ω◕', '◕‿◕', 'ʘ‿ʘ', '•̀ω•́', '•̀ω•́', '•́︿•̀', '╥﹏╥', 'ಥ_ಥ',
+  '；ω；', '；´д｀', '￣へ￣', '￣^￣', '°ロ°', '〃▽〃', '⁄ ⁄>⁄ω⁄<⁄ ⁄'
+];
+const catalogFrames = [['(', ')'], ['（', '）'], ['[', ']'], ['{', '}'], ['<', '>'], ['〔', '〕'], ['《', '》'], ['｢', '｣'], ['⌈', '⌋'], ['⟦', '⟧'], ['❨', '❩'], ['⟨', '⟩']];
+const catalogStarts = ['*', '｡', '°', '˙', 'ˊ', 'ˋ', '~', '!', '✦', '✧', '☆', '★', '♡', '♥', '❀', '✿', '☀', '☁', '☾', '♪'];
+const catalogEnds = ['*', '｡', '°', '˙', 'ˊ', 'ˋ', '~', '!', '✦', '✧', '☆', '★', '♡', '♥', '❀', '✿', '♪', 'ノ', 'つ', 'ゞ'];
+const catalogActions = ['ﾉ', 'ノ', 'つ', 'ゞ', 'b', 'v', 'o', 'σ', '☞', '♡', '✧', '☆', '♪', '!!', '…', '!', 'ง', '人', 'っ', 'づ'];
+const catalogAnimals = ['=^･ω･^=', '=｀ω´=', '=^-ω-^=', 'U･ｪ･U', 'U´•ω•`U', '•ㅅ•', '•ө•', 'ʕ•ᴥ•ʔ', 'ʕ·ᴥ·ʔ', '≧･ｪ･≦', '•ﻌ•', '•ᴥ•', '◕ᴥ◕', '(•ㅅ•)', 'εїз', 'U•ω•U'];
+const catalogSymbols = ['♡', '♥', '✦', '✧', '☆', '★', '✿', '❀', '☾', '☀', '☁', '♪', '｡', '°', '·', '…', '⌒', '─', '═', '⋆'];
+const catalogMoods = [
+  ['可愛', '開心'], ['柔和', '聊天'], ['手勢', '加油'], ['打招呼', '回覆'],
+  ['愛心', '可愛'], ['晚安', '柔和'], ['恭喜', '開心'], ['驚訝', '特殊'],
+  ['難過', '哭'], ['生氣', '特殊'], ['害羞', '可愛'], ['極簡', '聊天']
+];
+
+for (let seed = 0; data.length < catalogTarget && seed < 300000; seed += 1) {
+  const face = catalogFaces[seed % catalogFaces.length];
+  const frame = catalogFrames[Math.floor(seed / catalogFaces.length) % catalogFrames.length];
+  const start = catalogStarts[Math.floor(seed / (catalogFaces.length * catalogFrames.length)) % catalogStarts.length];
+  const end = catalogEnds[Math.floor(seed / (catalogFaces.length * catalogFrames.length * catalogStarts.length)) % catalogEnds.length];
+  const action = catalogActions[Math.floor(seed / 17) % catalogActions.length];
+  const mood = catalogMoods[Math.floor(seed / 31) % catalogMoods.length];
+  const style = seed % 7;
+
+  if (style === 0) addCatalogItem(`${start}${frame[0]}${face}${frame[1]}${action}${end}`, ['人物', ...mood]);
+  if (style === 1) addCatalogItem(`${start}${action}${frame[0]}${face}${frame[1]}${action}${end}`, ['手勢', ...mood]);
+  if (style === 2) addCatalogItem(`${start}${frame[0]}${face}${frame[1]}${end}${start}`, ['人物', '可愛', mood[1]]);
+  if (style === 3) addCatalogItem(`${start}${catalogAnimals[seed % catalogAnimals.length]}${action}${end}`, ['動物', seed % 2 ? '可愛' : '特殊', mood[1]]);
+  if (style === 4) addCatalogItem(`${frame[0]}${catalogAnimals[seed % catalogAnimals.length]}${frame[1]}${start}${end}`, ['動物', '聊天', mood[1]]);
+  if (style === 5) addCatalogItem(`${start}${catalogSymbols[seed % catalogSymbols.length]} ${face} ${catalogSymbols[Math.floor(seed / 13) % catalogSymbols.length]}${end}`, ['符號', ...mood]);
+  if (style === 6) addCatalogItem(`${catalogSymbols[seed % catalogSymbols.length]}${start}${frame[0]}${face}${frame[1]}${end}${catalogSymbols[Math.floor(seed / 19) % catalogSymbols.length]}`, ['裝飾', '特殊', mood[0]]);
+}
+
 const defaultCategories = [
   ['all', '全部'], ['updated', '最近更新'], ['recent', '最近使用'], ['favorites', '收藏'],
   ['動物', '動物'], ['人物', '人物'], ['手勢', '手勢'], ['愛心', '愛心'], ['符號', '符號'], ['裝飾', '裝飾'], ['more', '更多']
@@ -714,8 +763,14 @@ function renderFilters() {
   });
 }
 
+let visibleItemLimit = 180;
+let visibleListKey = '';
+
 function renderList() {
   const items = getVisibleItems();
+  const listKey = `${searchInput.value.trim()}|${activeCategory}|${activeCollection}|${favorites.join('\u0001')}|${recents.join('\u0001')}`;
+  if (listKey !== visibleListKey) { visibleListKey = listKey; visibleItemLimit = 180; }
+  const visibleItems = items.slice(0, visibleItemLimit);
   listEl.replaceChildren();
   listTitle.textContent = searchInput.value.trim() ? `搜尋「${searchInput.value.trim()}」` : activeCollection ? `收藏資料夾・${activeCollection}` : `${categoryNames[activeCategory] || activeCategory}顏文字`;
   const descriptions = { all: '從今天的心情開始挑選。', updated: '剛加入的顏文字。', recent: '你最近複製過的內容。', favorites: '留給下一次使用。', 動物: '貓、熊與各種可愛生物。', 人物: '日常情緒與表情。', 手勢: '用動作代替一句話。', 愛心: '把喜歡傳出去。', 符號: '特殊符號與裝飾性文字。', 裝飾: '讓訊息多一點氣氛。', more: '用完整分類找到剛剛好的表情。' };
@@ -723,7 +778,7 @@ function renderList() {
   countEl.textContent = `${items.length} 個`;
   emptyEl.hidden = items.length > 0;
   if (!items.length) renderRelatedSearches();
-  items.forEach(item => {
+  visibleItems.forEach(item => {
     const fragment = template.content.cloneNode(true);
     const row = fragment.querySelector('.kaomoji-row');
     const copy = fragment.querySelector('.kaomoji-copy');
@@ -742,6 +797,13 @@ function renderList() {
     collection.addEventListener('click', () => addToCollection(item.text));
     listEl.append(fragment);
   });
+  if (items.length > visibleItems.length) {
+    const more = document.createElement('button');
+    more.type = 'button'; more.className = 'load-more-button';
+    more.textContent = `載入更多（還有 ${items.length - visibleItems.length} 個）`;
+    more.addEventListener('click', () => { visibleItemLimit += 180; renderList(); });
+    listEl.append(more);
+  }
 }
 
 async function copyItem(text, row) {
