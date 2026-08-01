@@ -11,7 +11,7 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <title>顏文字 · Kaomoji</title>
-    <link rel="stylesheet" href="./styles.css?v=20260801-apple-safe" />
+    <link rel="stylesheet" href="./styles.css?v=20260801-personal-tools" />
   </head>
   <body>
     <header class="site-header">
@@ -52,9 +52,9 @@
 
       <section class="personal-tools" aria-label="我的工具">
         <div class="tool-tabs" role="tablist" aria-label="個人顏文字">
-          <button type="button" class="tool-tab active" data-personal-view="frequent">常用</button>
-          <button type="button" class="tool-tab" data-personal-view="collections">收藏資料夾</button>
-          <button type="button" class="tool-tab" data-personal-view="clipboard">暫存板 <span id="clipboard-count">0</span></button>
+          <button type="button" class="tool-tab active" data-personal-view="recent">最近使用 <span id="recent-count">0</span></button>
+          <button type="button" class="tool-tab" data-personal-view="collections">收藏分類</button>
+          <button type="button" class="tool-tab" data-personal-view="preferences">偏好設定</button>
         </div>
         <div id="personal-panel" class="personal-panel"></div>
       </section>
@@ -97,11 +97,13 @@
         <button id="detail-copy" type="button">複製顯示版</button>
         <button id="detail-copy-original" type="button">複製原版</button>
         <button id="detail-copy-safe" type="button" hidden>複製 Apple 安全版</button>
+        <button id="detail-save" type="button">儲存到收藏分類</button>
         <button id="detail-share" type="button">分享連結</button>
       </div>
       <div><p class="dialog-kicker">相似顏文字</p><div id="similar-kaomojis" class="similar-kaomojis"></div></div>
     </dialog>
 
-    <script src="./script.js?v=20260801-apple-safe"></script>
+    <script src="./dcard-originals.js?v=20260801-dcard-full"></script>
+    <script src="./script.js?v=20260801-personal-tools"></script>
   </body>
 </html>
