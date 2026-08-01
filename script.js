@@ -418,6 +418,14 @@ data.push(...[
 const catalogTarget = 50000;
 // 使用者提供的可愛顏文字：保留原本的文字組合；多行款以一個項目處理，複製時不會被拆開。
 const curatedCuteKaomojis = [
+  // Dcard 使用者提供的原始字串；不做字形替換或移除組合符號。
+  { text: 'ദ്ദി^ᴗ ̫ ᴗ^₎', tags: ['手勢', '可愛', '柔和', '原版'] },
+  { text: '\u{16A5E}( ˃͈\u{1111D}˂͈ )', tags: ['人物', '可愛', '特殊', '原版'] },
+  { text: 'ჱ̒ ｰ̀֊ｰ́ )', tags: ['手勢', '加油', '可愛', '原版'] },
+  { text: 'ദ്ദിᐢ- ̫-ᐢ₎', tags: ['手勢', '晚安', '可愛', '原版'] },
+  { text: 'ദ്ദി ˉ͈̀꒳ˉ͈́ )', tags: ['手勢', '開心', '可愛', '原版'] },
+  { text: 'ദ്ദി^._.^', tags: ['手勢', '動物', '貓', '原版'] },
+  { text: 'ʕ o̴̶̷᷄ ̫ o̴̶̷̥᷅ ʔ', tags: ['動物', '熊', '哭', '原版'] },
   { text: "՞⸝⸝'ᜊ'⸝⸝՞", tags: ['可愛', '特殊', '人物'] },
   { text: "⌯'▾'⌯", tags: ['可愛', '人物', '特殊'] },
   { text: 'ᕑᗢᓫ', tags: ['動物', '貓', '可愛'] },
@@ -546,6 +554,14 @@ const stableSymbolPack = [
 ].map(([text, tags]) => ({ text, tags }));
 curatedCuteKaomojis.push(...stableSymbolPack);
 data.unshift(...curatedCuteKaomojis);
+// 完整 Dcard 原文資料優先顯示，並與既有收藏去重。
+const dcardExistingTexts = new Set(data.map(item => item.text));
+const dcardOriginalKaomojis = (window.dcardOriginalItems || []).filter(item => {
+  if (dcardExistingTexts.has(item.text)) return false;
+  dcardExistingTexts.add(item.text);
+  return true;
+});
+data.unshift(...dcardOriginalKaomojis);
 const catalogSeen = new Set(data.map(item => item.text));
 const addCatalogItem = (text, tags) => {
   if (!catalogSeen.has(text)) {
@@ -607,10 +623,20 @@ const glyphSignature = glyph => {
 };
 const missingGlyphSignatures = new Set(['\uFFFD', '\u25A1'].map(glyphSignature));
 const hasMissingGlyph = value => [...value].some(char => !/\p{M}|\s/u.test(char) && missingGlyphSignatures.has(glyphSignature(char)));
-const getDisplayText = item => item.safeText && hasMissingGlyph(item.text) ? item.safeText : item.text;
+// 組合字元會在部分字型中畫成橫槓或漂浮筆畫；統一轉成穩定版本。
+const stabilizeKaomojiText = value => String(value)
+  .normalize('NFD')
+  .replace(/\p{M}/gu, '')
+  .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+  .normalize('NFC');
+data.forEach(item => {
+  item.text = stabilizeKaomojiText(item.text);
+  if (item.safeText) item.safeText = stabilizeKaomojiText(item.safeText);
+});
+const getDisplayText = item => stabilizeKaomojiText(item.safeText && hasMissingGlyph(item.text) ? item.safeText : item.text);
 
 const defaultCategories = [
-  ['all', '全部'], ['updated', '最近更新'], ['recent', '最近使用'], ['favorites', '收藏'],
+  ['all', '全部'], ['frequent', '常用'], ['updated', '最近更新'],
   ['動物', '動物'], ['人物', '人物'], ['手勢', '手勢'], ['愛心', '愛心'], ['符號', '符號'], ['裝飾', '裝飾'], ['more', '更多']
 ];
 function getCategoryOrder() {
@@ -655,7 +681,7 @@ const resetCategoryOrderButton = document.querySelector('#reset-category-order')
 const reorderCategoriesButton = document.querySelector('#reorder-categories');
 const personalPanel = document.querySelector('#personal-panel');
 const toolTabs = [...document.querySelectorAll('.tool-tab')];
-const clipboardCount = document.querySelector('#clipboard-count');
+const recentCount = document.querySelector('#recent-count');
 const themeToggle = document.querySelector('#theme-toggle');
 const detailsDialog = document.querySelector('#details-dialog');
 const detailKaomoji = document.querySelector('#detail-kaomoji');
@@ -664,11 +690,12 @@ const detailTags = document.querySelector('#detail-tags');
 const detailCopy = document.querySelector('#detail-copy');
 const detailCopyOriginal = document.querySelector('#detail-copy-original');
 const detailCopySafe = document.querySelector('#detail-copy-safe');
+const detailSave = document.querySelector('#detail-save');
 const detailShare = document.querySelector('#detail-share');
 const similarKaomojis = document.querySelector('#similar-kaomojis');
 let activeCategory = 'all';
 let activeCollection = '';
-let personalView = 'frequent';
+let personalView = 'recent';
 let detailItem = null;
 let expandedFilters = false;
 let draggedCategory = null;
@@ -688,16 +715,27 @@ function readLocalObject(key) {
 }
 let favorites = readLocalList('kaomoji-favorites');
 let recents = readLocalList('kaomoji-recents');
-let clipboardTray = readLocalList('kaomoji-clipboard-tray');
+let recentTimes = readLocalObject('kaomoji-recent-times');
 let usage = readLocalObject('kaomoji-usage');
 let collections = readLocalObject('kaomoji-collections');
+let preferences = { recentRetentionHours: 24, ...readLocalObject('kaomoji-preferences') };
+preferences.recentRetentionHours = Number(preferences.recentRetentionHours) || 24;
+
+function pruneRecents() {
+  const cutoff = Date.now() - preferences.recentRetentionHours * 60 * 60 * 1000;
+  recents.forEach(text => { if (!recentTimes[text]) recentTimes[text] = Date.now(); });
+  recents = recents.filter(text => recentTimes[text] >= cutoff);
+  Object.keys(recentTimes).forEach(text => { if (!recents.includes(text)) delete recentTimes[text]; });
+}
+pruneRecents();
 
 function save() {
   localStorage.setItem('kaomoji-favorites', JSON.stringify(favorites));
   localStorage.setItem('kaomoji-recents', JSON.stringify(recents));
-  localStorage.setItem('kaomoji-clipboard-tray', JSON.stringify(clipboardTray));
+  localStorage.setItem('kaomoji-recent-times', JSON.stringify(recentTimes));
   localStorage.setItem('kaomoji-usage', JSON.stringify(usage));
   localStorage.setItem('kaomoji-collections', JSON.stringify(collections));
+  localStorage.setItem('kaomoji-preferences', JSON.stringify(preferences));
 }
 
 function saveCategoryOrder() {
@@ -726,15 +764,18 @@ reorderCategoriesButton.addEventListener('click', () => {
 window.addEventListener('storage', event => {
   if (event.key === 'kaomoji-favorites') favorites = readLocalList('kaomoji-favorites');
   if (event.key === 'kaomoji-recents') recents = readLocalList('kaomoji-recents');
+  if (event.key === 'kaomoji-recent-times') recentTimes = readLocalObject('kaomoji-recent-times');
   if (event.key === 'kaomoji-usage') usage = readLocalObject('kaomoji-usage');
   if (event.key === 'kaomoji-collections') collections = readLocalObject('kaomoji-collections');
-  if (['kaomoji-favorites', 'kaomoji-recents', 'kaomoji-usage', 'kaomoji-collections'].includes(event.key)) { renderList(); renderPersonalPanel(); }
+  if (event.key === 'kaomoji-preferences') preferences = { recentRetentionHours: 24, ...readLocalObject('kaomoji-preferences') };
+  if (['kaomoji-favorites', 'kaomoji-recents', 'kaomoji-recent-times', 'kaomoji-usage', 'kaomoji-collections', 'kaomoji-preferences'].includes(event.key)) { pruneRecents(); renderList(); renderPersonalPanel(); }
 });
 
 function matchesCategory(item) {
   if (activeCollection) return (collections[activeCollection] || []).includes(item.text);
   if (activeCategory === 'all' || activeCategory === 'updated') return true;
   if (activeCategory === 'favorites') return favorites.includes(item.text);
+  if (activeCategory === 'frequent') return Boolean(usage[item.text]);
   if (activeCategory === 'recent') return recents.includes(item.text);
   if (activeCategory === 'more') return true;
   return item.tags.includes(activeCategory);
@@ -748,31 +789,37 @@ function makeToolButton(label, handler, className = '') {
 function renderPersonalPanel() {
   personalPanel.replaceChildren();
   toolTabs.forEach(button => button.classList.toggle('active', button.dataset.personalView === personalView));
-  clipboardCount.textContent = clipboardTray.length;
-  if (personalView === 'frequent') {
-    const entries = Object.entries(usage).sort(([, a], [, b]) => b - a).slice(0, 8);
-    if (!entries.length) { const note = document.createElement('p'); note.textContent = '複製過的顏文字會自動放在這裡。'; personalPanel.append(note); return; }
-    entries.forEach(([text, count]) => personalPanel.append(makeToolButton(`${text} · ${count}`, () => copyItem(text))));
+  pruneRecents();
+  recentCount.textContent = recents.length;
+  if (personalView === 'recent') {
+    const label = document.createElement('p'); label.textContent = `保留最近 ${preferences.recentRetentionHours} 小時；點一下即可儲存到收藏分類。`; personalPanel.append(label);
+    if (!recents.length) { const note = document.createElement('p'); note.textContent = '你複製過的顏文字會出現在這裡。'; personalPanel.append(note); return; }
+    recents.slice(0, 14).forEach(text => personalPanel.append(makeToolButton(text, () => addToCollection(text), 'recent-chip')));
   }
   if (personalView === 'collections') {
     personalPanel.append(makeToolButton('＋ 新增資料夾', createCollection, 'primary-tool'));
     const names = Object.keys(collections);
-    if (!names.length) { const note = document.createElement('p'); note.textContent = '建立資料夾，整理聊天、遊戲或日常用的顏文字。'; personalPanel.append(note); }
+    if (!names.length) { const note = document.createElement('p'); note.textContent = '建立可自行命名的收藏分類，例如：聊天、遊戲、日常。'; personalPanel.append(note); }
     names.forEach(name => {
       const count = collections[name].length;
+      const group = document.createElement('span'); group.className = 'collection-group';
       const button = makeToolButton(`${name} · ${count}`, () => {
         activeCollection = activeCollection === name ? '' : name; activeCategory = 'all'; renderList(); renderPersonalPanel();
       }, `collection-chip${activeCollection === name ? ' primary-tool' : ''}`);
-      button.title = '點一下篩選；按住不放可刪除';
-      button.addEventListener('contextmenu', event => { event.preventDefault(); if (confirm(`刪除「${name}」資料夾？顏文字不會被刪除。`)) { delete collections[name]; if (activeCollection === name) activeCollection = ''; save(); renderPersonalPanel(); renderList(); } });
-      personalPanel.append(button);
+      button.title = '查看這個收藏分類'; group.append(button);
+      group.append(makeToolButton('✎', () => renameCollection(name), 'collection-action'));
+      group.append(makeToolButton('×', () => deleteCollection(name), 'collection-action'));
+      personalPanel.append(group);
     });
   }
-  if (personalView === 'clipboard') {
-    if (!clipboardTray.length) { const note = document.createElement('p'); note.textContent = '點擊顏文字後會暫存在這裡，可一次複製。'; personalPanel.append(note); return; }
-    personalPanel.append(makeToolButton('複製全部', () => copyMany(clipboardTray), 'primary-tool'));
-    personalPanel.append(makeToolButton('清空', () => { clipboardTray = []; save(); renderPersonalPanel(); }, 'danger-tool'));
-    clipboardTray.slice(0, 10).forEach(text => personalPanel.append(makeToolButton(text, () => copyItem(text))));
+  if (personalView === 'preferences') {
+    const label = document.createElement('p'); label.textContent = '最近使用保留時間'; personalPanel.append(label);
+    [1, 6, 24, 72, 168].forEach(hours => {
+      const unit = hours === 1 ? '1 小時' : hours < 24 ? `${hours} 小時` : `${hours / 24} 天`;
+      personalPanel.append(makeToolButton(unit, () => {
+        preferences.recentRetentionHours = hours; pruneRecents(); save(); renderPersonalPanel(); renderList();
+      }, preferences.recentRetentionHours === hours ? 'primary-tool' : ''));
+    });
   }
 }
 
@@ -783,6 +830,21 @@ function createCollection() {
   save(); renderPersonalPanel();
 }
 
+function renameCollection(oldName) {
+  const name = prompt('新的收藏分類名稱', oldName)?.trim();
+  if (!name || name === oldName) return;
+  if (collections[name]) { alert('已有同名的收藏分類。'); return; }
+  collections[name] = collections[oldName]; delete collections[oldName];
+  if (activeCollection === oldName) activeCollection = name;
+  save(); renderPersonalPanel(); renderList();
+}
+
+function deleteCollection(name) {
+  if (!confirm(`刪除「${name}」收藏分類？顏文字不會被刪除。`)) return;
+  delete collections[name]; if (activeCollection === name) activeCollection = '';
+  save(); renderPersonalPanel(); renderList();
+}
+
 function addToCollection(text) {
   let names = Object.keys(collections);
   if (!names.length) { createCollection(); names = Object.keys(collections); }
@@ -791,14 +853,7 @@ function addToCollection(text) {
   if (!name) return;
   if (!collections[name]) collections[name] = [];
   collections[name] = [text, ...collections[name].filter(item => item !== text)];
-  favorites = favorites.includes(text) ? favorites : [text, ...favorites];
   save(); renderPersonalPanel();
-}
-
-async function copyMany(items) {
-  const value = items.join(' ');
-  try { await navigator.clipboard.writeText(value); }
-  catch { window.prompt('請複製這組顏文字：', value); }
 }
 
 function showDetails(item) {
@@ -830,6 +885,7 @@ function getVisibleItems() {
       return { item, score };
     }).filter(({ score }) => score > 0).sort((a, b) => b.score - a.score).map(({ item }) => item);
   }
+  if (activeCategory === 'frequent') items.sort((a, b) => (usage[b.text] || 0) - (usage[a.text] || 0));
   if (activeCategory === 'recent') items.sort((a, b) => recents.indexOf(a.text) - recents.indexOf(b.text));
   if (activeCollection) items.sort((a, b) => (collections[activeCollection] || []).indexOf(a.text) - (collections[activeCollection] || []).indexOf(b.text));
   return items;
@@ -935,7 +991,7 @@ function renderList() {
   const visibleItems = items.slice(0, visibleItemLimit);
   listEl.replaceChildren();
   listTitle.textContent = searchInput.value.trim() ? `搜尋「${searchInput.value.trim()}」` : activeCollection ? `收藏資料夾・${activeCollection}` : `${categoryNames[activeCategory] || activeCategory}顏文字`;
-  const descriptions = { all: '從今天的心情開始挑選。', updated: '剛加入的顏文字。', recent: '你最近複製過的內容。', favorites: '留給下一次使用。', 動物: '貓、熊與各種可愛生物。', 人物: '日常情緒與表情。', 手勢: '用動作代替一句話。', 愛心: '把喜歡傳出去。', 符號: '特殊符號與裝飾性文字。', 裝飾: '讓訊息多一點氣氛。', more: '用完整分類找到剛剛好的表情。' };
+  const descriptions = { all: '從今天的心情開始挑選。', frequent: '依你的使用次數排序。', updated: '剛加入的顏文字。', recent: '你最近複製過的內容。', favorites: '舊版收藏。', 動物: '貓、熊與各種可愛生物。', 人物: '日常情緒與表情。', 手勢: '用動作代替一句話。', 愛心: '把喜歡傳出去。', 符號: '特殊符號與裝飾性文字。', 裝飾: '讓訊息多一點氣氛。', more: '用完整分類找到剛剛好的表情。' };
   categoryDescription.textContent = searchInput.value.trim() ? '依名稱、用途、外觀與關鍵字篩選。' : activeCollection ? '你的個人整理，儲存在此裝置。' : descriptions[activeCategory];
   countEl.textContent = `${items.length} 個`;
   emptyEl.hidden = items.length > 0;
@@ -953,10 +1009,11 @@ function renderList() {
     row.classList.toggle('multiline', Boolean(item.multiline));
     fragment.querySelector('.kaomoji-tags').innerHTML = item.tags.slice(0, 3).map(tag => `<i>${tag}</i>`).join('');
     copy.setAttribute('aria-label', `複製：${item.tags.slice(0, 2).join('、')} ${displayText}`);
-    favorite.classList.toggle('active', favorites.includes(item.text));
-    favorite.setAttribute('aria-label', favorites.includes(item.text) ? '取消收藏' : '加入收藏');
+    const isCollected = Object.values(collections).some(items => items.includes(item.text));
+    favorite.classList.toggle('active', isCollected);
+    favorite.setAttribute('aria-label', isCollected ? '已儲存至收藏分類' : '儲存到收藏分類');
     copy.addEventListener('click', () => copyItem(displayText, row));
-    favorite.addEventListener('click', () => toggleFavorite(item.text));
+    favorite.addEventListener('click', () => addToCollection(item.text));
     details.addEventListener('click', () => showDetails(item));
     collection.addEventListener('click', () => addToCollection(item.text));
     listEl.append(fragment);
@@ -973,9 +1030,9 @@ function renderList() {
 async function copyItem(text, row) {
   try { await navigator.clipboard.writeText(text); }
   catch { const input = document.createElement('textarea'); input.value = text; document.body.append(input); input.select(); document.execCommand('copy'); input.remove(); }
-  recents = [text, ...recents.filter(item => item !== text)].slice(0, 30); save();
+  recentTimes[text] = Date.now();
+  recents = [text, ...recents.filter(item => item !== text)].slice(0, 100); pruneRecents(); save();
   usage[text] = (usage[text] || 0) + 1;
-  clipboardTray = [text, ...clipboardTray.filter(item => item !== text)].slice(0, 12);
   save(); renderPersonalPanel();
   if (row) { row.classList.add('copied'); window.setTimeout(() => row.classList.remove('copied'), 800); }
 }
@@ -1022,6 +1079,7 @@ document.querySelector('.dialog-close').addEventListener('click', () => detailsD
 detailCopy.addEventListener('click', async () => { if (detailItem) { await copyItem(getDisplayText(detailItem)); detailCopy.textContent = '已複製'; window.setTimeout(() => { detailCopy.textContent = '複製顯示版'; }, 900); } });
 detailCopyOriginal.addEventListener('click', async () => { if (detailItem) { await copyItem(detailItem.text); detailCopyOriginal.textContent = '已複製原版'; window.setTimeout(() => { detailCopyOriginal.textContent = '複製原版'; }, 900); } });
 detailCopySafe.addEventListener('click', async () => { if (detailItem?.safeText) { await copyItem(detailItem.safeText); detailCopySafe.textContent = '已複製安全版'; window.setTimeout(() => { detailCopySafe.textContent = '複製 Apple 安全版'; }, 900); } });
+detailSave.addEventListener('click', () => { if (detailItem) addToCollection(detailItem.text); });
 detailShare.addEventListener('click', async () => {
   if (!detailItem) return;
   const url = `${location.origin}${location.pathname}?q=${encodeURIComponent(detailItem.text)}`;
@@ -1047,28 +1105,53 @@ document.addEventListener('keydown', event => {
   if (!isTyping && event.key === 'Enter' && document.activeElement?.classList.contains('kaomoji-copy')) document.activeElement.click();
 });
 
+// Dcard 顏文字整理：只保留不依賴組合字元的版本，避免在搜尋欄與鍵盤中變成橫槓。
+data.push(...[
+  ['(´･-･●`)', ['人物', '難過', '極簡']], ['(´･Д･)」', ['人物', '困惑', '特殊']],
+  ['|ω･`)', ['人物', '害羞', '極簡']], ['\\( ᐙ )/', ['人物', '驚訝', '特殊']],
+  ['(*꒪꒫꒪)', ['人物', '驚訝', '特殊']], ['(´；ω；｀)', ['人物', '哭', '難過']],
+  ['(´∩ω∩｀)', ['人物', '哭', '難過']], ['ヽ(｀⌒´)ノ', ['人物', '生氣', '特殊']],
+  ['(°ー°〃)', ['人物', '尷尬', '極簡']], ['( ˘•ω•˘ )', ['人物', '難過', '柔和']],
+  ['( ˙-˙ )', ['人物', '無言', '極簡']], ['ψ`ー´)ﾉ', ['人物', '手勢', '特殊']],
+  ['ψ(｀∇´)ψ', ['人物', '開心', '特殊']], ['ᕕ ( ᐛ ) ᕗ', ['人物', '加油', '特殊']],
+  ['٩(◦`꒳´◦)۶', ['人物', '加油', '可愛']], ['(* ` ꒳´*)', ['人物', '認真', '特殊']],
+  ['(´･ᴗ･`)', ['人物', '柔和', '聊天']], ['(* ´ㅁ`*)', ['人物', '害羞', '可愛']],
+  ['(´･ｪ･`)', ['人物', '害羞', '柔和']], ['( ˙˘˙ )', ['人物', '柔和', '極簡']],
+  ['(●´⌓`●)', ['人物', '困惑', '可愛']], ['(˘･_･˘)', ['人物', '無言', '極簡']],
+  ['(｡>∀<｡)', ['人物', '開心', '可愛']], ['ꉂ(ˊᗜˋ*)', ['人物', '開心', '可愛']],
+  ['( ´▽` )ﾉ', ['人物', '打招呼', '開心']], ['( ´∀｀)', ['人物', '開心', '極簡']],
+  ['(*´▽`*)', ['人物', '開心', '可愛']], ['(o´∀`o)', ['人物', '開心', '可愛']],
+  ['ヽ(°▽°)ノ', ['人物', '開心', '特殊']], ['(✧∇✧)', ['人物', '開心', '星星']],
+  ['✧', ['符號', '星星', '極簡']], ['☾', ['符號', '天氣', '晚安']],
+  ['☽', ['符號', '天氣', '晚安']], ['⋆', ['符號', '星星', '極簡']],
+  ['ᗦ↞◃', ['符號', '裝飾', '特殊']], ['シ', ['符號', '人物', '極簡']],
+  ['˗ˋˏ♡ˎˊ˗', ['符號', '愛心', '裝飾']], ['✺', ['符號', '星星', '極簡']],
+  ['⁎', ['符號', '裝飾', '極簡']], ['๑', ['符號', '可愛', '極簡']],
+  ['❀', ['符號', '花朵', '極簡']], ['⌨', ['符號', '特殊', '極簡']],
+  ['ଘ', ['符號', '裝飾', '極簡']], ['๛', ['符號', '裝飾', '極簡']],
+  ['✄', ['符號', '裝飾', '極簡']], ['ꕤ', ['符號', '花朵', '極簡']],
+  ['✿', ['符號', '花朵', '極簡']], ['〄', ['符號', '特殊', '極簡']],
+  ['☼', ['符號', '天氣', '極簡']], ['☻', ['符號', '人物', '極簡']],
+  ['❤', ['符號', '愛心', '極簡']], ['❣', ['符號', '愛心', '極簡']],
+  ['☹', ['符號', '人物', '難過']], ['☺', ['符號', '人物', '開心']],
+  ['♺', ['符號', '特殊', '極簡']], ['❦', ['符號', '愛心', '花朵']],
+  ['ꨄ', ['符號', '愛心', '特殊']], ['ఌ', ['符號', '愛心', '特殊']],
+  ['❥', ['符號', '愛心', '極簡']], ['♥', ['符號', '愛心', '極簡']],
+  ['☢', ['符號', '特殊', '極簡']], ['᯽', ['符號', '星星', '特殊']],
+  ['✫', ['符號', '星星', '極簡']], ['۞', ['符號', '天氣', '特殊']],
+  ['❄', ['符號', '天氣', '極簡']], ['⁂', ['符號', '星星', '極簡']],
+  ['Ꙭ', ['符號', '人物', '特殊']], ['☦', ['符號', '特殊', '極簡']],
+  ['⍟', ['符號', '星星', '極簡']], ['♔', ['符號', '特殊', '極簡']],
+  ['♕', ['符號', '特殊', '極簡']], ['☯', ['符號', '特殊', '極簡']],
+  ['☕', ['符號', '食物', '聊天']], ['☃', ['符號', '天氣', '極簡']],
+  ['☔', ['符號', '天氣', '難過']], ['⚠', ['符號', '特殊', '極簡']],
+  ['ꕥ', ['符號', '花朵', '極簡']], ['♲', ['符號', '特殊', '極簡']],
+  ['☘', ['符號', '花朵', '柔和']], ['⚚', ['符號', '特殊', '極簡']],
+  ['ʚɞ', ['符號', '可愛', '裝飾']], ['⚀ ⚁ ⚂ ⚃ ⚄ ⚅', ['符號', '特殊', '裝飾']],
+].map(([text, tags]) => ({ text, tags })));
+
 renderCategories();
 renderFilters();
 renderPersonalPanel();
 renderList();
 if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js'));
-
-
-// Dcard 整理：只收錄不依賴組合字元的符號。
-data.push(...[
-  ['✧', ['符號', '星星', '極簡']], ['☾', ['符號', '天氣', '晚安']], ['☽', ['符號', '天氣', '晚安']], ['⋆', ['符號', '星星', '極簡']], ['ᗦ↞◃', ['符號', '裝飾', '特殊']], ['シ', ['符號', '人物', '極簡']], ['˗ˋˏ♡ˎˊ˗', ['符號', '愛心', '裝飾']], ['✺', ['符號', '星星', '極簡']], ['⁎', ['符號', '裝飾', '極簡']], ['๑', ['符號', '可愛', '極簡']], ['❀', ['符號', '花朵', '極簡']], ['⌨', ['符號', '特殊', '極簡']], ['ଘ', ['符號', '裝飾', '極簡']], ['๛', ['符號', '裝飾', '極簡']], ['✄', ['符號', '裝飾', '極簡']], ['ꕤ', ['符號', '花朵', '極簡']], ['✿', ['符號', '花朵', '極簡']], ['〄', ['符號', '特殊', '極簡']], ['☼', ['符號', '天氣', '極簡']], ['☻', ['符號', '人物', '極簡']], ['❤', ['符號', '愛心', '極簡']], ['❣', ['符號', '愛心', '極簡']], ['☹', ['符號', '人物', '難過']], ['☺', ['符號', '人物', '開心']], ['♺', ['符號', '特殊', '極簡']], ['❦', ['符號', '愛心', '花朵']], ['ꨄ', ['符號', '愛心', '特殊']], ['ఌ', ['符號', '愛心', '特殊']], ['❥', ['符號', '愛心', '極簡']], ['♥', ['符號', '愛心', '極簡']], ['☢', ['符號', '特殊', '極簡']], ['᯽', ['符號', '星星', '特殊']], ['✫', ['符號', '星星', '極簡']], ['۞', ['符號', '天氣', '特殊']], ['❄', ['符號', '天氣', '極簡']], ['⁂', ['符號', '星星', '極簡']], ['Ꙭ', ['符號', '人物', '特殊']], ['☦', ['符號', '特殊', '極簡']], ['⍟', ['符號', '星星', '極簡']], ['♔', ['符號', '特殊', '極簡']], ['♕', ['符號', '特殊', '極簡']], ['☯', ['符號', '特殊', '極簡']], ['☕', ['符號', '食物', '聊天']], ['☃', ['符號', '天氣', '極簡']], ['☔', ['符號', '天氣', '難過']], ['⚠', ['符號', '特殊', '極簡']], ['ꕥ', ['符號', '花朵', '極簡']], ['♲', ['符號', '特殊', '極簡']], ['☘', ['符號', '花朵', '柔和']], ['⚚', ['符號', '特殊', '極簡']], ['ʚɞ', ['符號', '可愛', '裝飾']], ['⚀ ⚁ ⚂ ⚃ ⚄ ⚅', ['符號', '特殊', '裝飾']],
-].map(([text, tags]) => ({ text, tags })));
-renderCategories(); renderFilters(); renderList();
-
-
-// 修復在 Google、iOS 等字型上會變成橫槓的組合字元。
-const stabilizeKaomojiText = value => String(value)
-  .normalize('NFD')
-  .replace(/\p{M}/gu, '')
-  .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
-  .normalize('NFC');
-data.forEach(item => {
-  item.text = stabilizeKaomojiText(item.text);
-  if (item.safeText) item.safeText = stabilizeKaomojiText(item.safeText);
-});
-renderList();
