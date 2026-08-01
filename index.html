@@ -155,6 +155,111 @@
       <section id="filter-panel" class="filter-panel" aria-label="完整分類" hidden></section>
       <button id="reset-category-order" class="reset-category-order" type="button" hidden>重設分類排序</button>
 
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta name="google-site-verification" content="ATZ54jSmBNwlNA5wtDltwDl-z40G0JLNudGG2Vy8XMU" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#fafafa" />
+    <meta name="description" content="快速搜尋、收藏並複製顏文字。乾淨、安靜的 Kaomoji 工具。" />
+    <meta property="og:title" content="顏文字 · Kaomoji" />
+    <meta property="og:description" content="快速搜尋、收藏並複製顏文字。" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <title>顏文字 · Kaomoji</title>
+    <link rel="stylesheet" href="./styles.css?v=20260801-glyph-fix" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-content">
+        <a class="logo" href="#top" aria-label="顏文字首頁">顏文字<span>·</span></a>
+        <label class="header-search" for="search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="search-input" type="search" placeholder="搜尋" autocomplete="off" />
+        </label>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" title="切換深色模式">◐</button>
+      </div>
+    </header>
+
+    <main id="top" class="main-content">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">KAOMOJI LIBRARY</p>
+        <h1 id="page-title">想說的，用一個表情就好。</h1>
+        <p>搜尋、點擊、複製。沒有多餘的事。</p>
+        <label class="hero-search" for="hero-search-input">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+          <input id="hero-search-input" type="search" placeholder="搜尋顏文字... 例如：貓、哭、招手、愛心" autocomplete="off" />
+          <button class="clear-search" type="button" aria-label="清除搜尋">清除</button>
+        </label>
+        <div class="suggestions" aria-label="常用搜尋">
+          <span>試試看</span>
+          <button type="button">貓</button><button type="button">打招呼</button><button type="button">加油</button><button type="button">晚安</button>
+          <button type="button" id="random-button" class="random-button">隨機複製</button>
+          <button type="button" id="mood-button" class="random-button">心情探索</button>
+        </div>
+      </section>
+
+      <nav class="category-bar" aria-label="顏文字分類">
+        <div id="categories" class="categories"></div>
+        <button id="reorder-categories" class="reorder-categories" type="button" aria-pressed="false">調整順序</button>
+      </nav>
+      <section id="filter-panel" class="filter-panel" aria-label="完整分類" hidden></section>
+      <button id="reset-category-order" class="reset-category-order" type="button" hidden>重設分類排序</button>
+
+      <section class="personal-tools" aria-label="我的工具">
+        <div class="tool-tabs" role="tablist" aria-label="個人顏文字">
+          <button type="button" class="tool-tab active" data-personal-view="frequent">常用</button>
+          <button type="button" class="tool-tab" data-personal-view="collections">收藏資料夾</button>
+          <button type="button" class="tool-tab" data-personal-view="clipboard">暫存板 <span id="clipboard-count">0</span></button>
+        </div>
+        <div id="personal-panel" class="personal-panel"></div>
+      </section>
+
+      <section class="list-section" aria-live="polite">
+        <div class="list-heading">
+          <div><p id="list-title">全部顏文字</p><span id="category-description">從今天的心情開始挑選。</span></div>
+          <div class="list-meta"><span id="result-count"></span><span class="storage-status">儲存於此裝置</span></div>
+        </div>
+        <div id="kaomoji-list" class="kaomoji-list"></div>
+        <div id="empty-state" class="empty-state" hidden>
+          <p>找不到相符的顏文字</p>
+          <div id="related-searches" class="related-searches" aria-label="建議搜尋"></div>
+          <button type="button" id="reset-button">清除搜尋</button>
+        </div>
+      </section>
+    </main>
+
+    <template id="kaomoji-template">
+      <article class="kaomoji-row">
+        <button class="kaomoji-copy" type="button" aria-label="複製顏文字">
+          <span class="kaomoji-main"><span class="kaomoji-text"></span><span class="copied-text" aria-hidden="true">✓ 已複製</span></span>
+          <span class="kaomoji-tags"></span>
+        </button>
+        <button class="favorite-button" type="button" aria-label="加入收藏">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 20-1.45-1.32C5.4 14.02 2 10.94 2 7.15 2 4.07 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09A6.05 6.05 0 0 1 16.5 2C19.58 2 22 4.07 22 7.15c0 3.79-3.4 6.87-8.55 11.54L12 20Z"></path></svg>
+        </button>
+        <button class="details-button" type="button" aria-label="查看顏文字詳情">i</button>
+        <button class="collection-button" type="button" aria-label="加入收藏資料夾">＋</button>
+      </article>
+    </template>
+
+    <dialog id="details-dialog" class="details-dialog">
+      <button class="dialog-close" type="button" aria-label="關閉">×</button>
+      <p class="dialog-kicker">顏文字詳情</p>
+      <p id="detail-kaomoji" class="detail-kaomoji"></p>
+      <p id="detail-name" class="detail-name"></p>
+      <div id="detail-tags" class="detail-tags"></div>
+      <div class="detail-actions">
+        <button id="detail-copy" type="button">複製</button>
+        <button id="detail-share" type="button">分享連結</button>
+      </div>
+      <div><p class="dialog-kicker">相似顏文字</p><div id="similar-kaomojis" class="similar-kaomojis"></div></div>
+    </dialog>
+
+    <script src="./script.js?v=20260801-glyph-fix"></script>
+  </body>
+</html>
       <section class="personal-tools" aria-label="我的工具">
         <div class="tool-tabs" role="tablist" aria-label="個人顏文字">
           <button type="button" class="tool-tab active" data-personal-view="frequent">常用</button>
