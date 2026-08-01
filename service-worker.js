@@ -14,6 +14,17 @@ const ASSETS = ['./', './index.html', './styles.css?v=20260801-50000-catalog', '
 
 const CACHE = 'kaomoji-v8';
 const ASSETS = ['./', './index.html', './styles.css?v=20260801-curated-cute', './script.js?v=20260801-curated-cute', './manifest.webmanifest', './favicon.svg'];
+const CACHE = 'kaomoji-v9';
+const ASSETS = ['./', './index.html', './styles.css?v=20260801-glyph-fix', './script.js?v=20260801-glyph-fix', './manifest.webmanifest', './favicon.svg'];
+
+self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())));
+self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
+self.addEventListener('fetch', event => {
+  if (event.request.method !== 'GET') return;
+  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request).then(response => {
+    const copy = response.clone(); caches.open(CACHE).then(cache => cache.put(event.request, copy)); return response;
+  }).catch(() => caches.match('./index.html'))));
+});
 
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
