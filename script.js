@@ -403,6 +403,25 @@ data.push(...[
   { text: 'ʕ•̫͡•ʕ*̫͡*ʕ•͓͡•ʔ-̫͡-ʕ•̫͡•ʔ*̫͡*ʔ-̫͡-ʔ', tags: ['符號', '動物', '社群'] },
 ]);
 
+// 使用者提供的愛心、花體與社群裝飾符號。
+// 成套排版保留為完整項目，常用的單獨符號也可分開搜尋與複製。
+data.push(...[
+  ['₊ ⤾ ◡̈:', ['符號', '表情', '社群']],
+  ['𓂆ྀི❤︎𓂇ྀི ⠀͛♡̷̷̷·͛', ['符號', '愛心', '裝飾', '社群']],
+  ['𝄞⨾𓋢ִ ་ ⠀ .☘︎ ˖꙳ ⸌☻̱⸍꙳ ❤︎ 𝄢..♬ ♡ ྀི 𐀪♡𐁑', ['符號', '音樂', '愛心', '裝飾']],
+  ['♡͈͓ ♡̼̫ ♡̤̜ ♡̤̹ ♡̤̮ ♡͈̮ ♡̤̥ ♡͈̥', ['符號', '愛心', '花體']],
+  ['♡̤̻ ♡͈̻ ♡̤̫ ♡͈̫ ♡̤̯ ♡͈̯ ♡̤̱ ♡̤͓', ['符號', '愛心', '花體']],
+  ['ꗯ̤ ꗯ̤̥ ꗯ̤̫ ꗯ̤̫͚ ꗯ̤̮ ꗯ̤̯ ꗯ̤̱ ꗯ̤̻ ꗯ͈̥', ['符號', '花體', '裝飾']],
+  ['ꗯ͈̫ ꗯ͈̫͚ ꗯ͈̮ ꗯ͈̯ ꗯ͈̱', ['符號', '花體', '裝飾']],
+  ['⋆𐹚₊˚⊹♡⋆౨ಜ˚⟡˖ ࣧ୧ ‧₊˚', ['符號', '愛心', '裝飾']],
+  ['⋆˚✿˖°.𒕔 ݁ ˖౨ಜ ‧₊˚ྒ꒰ྀི´ ˘ ` ꒱ྀིª˚₊‧', ['符號', '花朵', '可愛', '裝飾']],
+  ['. ᵎᵎ ⋆౨ಜ˚⟡˖ ࣧ 𝟗𝟚˚ ࿘ ೀ⋆｡˚ ʚɞ ⁺˖ ⸝⸝', ['符號', '可愛', '裝飾']],
+  ['⋆⁺₊. ✩🫧. ♡ ₊ ˚ ‧ ₊ ✧₊˚*ੈ♡⸝⸝', ['符號', '愛心', '星星', '裝飾']],
+  ['⋆ * .♡ *:·ἀ. ݁ ˖ ת . ⋆ * .♡ * 𝐀ᩚ', ['符號', '愛心', '裝飾']],
+  ...['♡͈͓', '♡̼̫', '♡̤̜', '♡̤̹', '♡̤̮', '♡͈̮', '♡̤̥', '♡͈̥', '♡̤̻', '♡͈̻', '♡̤̫', '♡͈̫', '♡̤̯', '♡͈̯', '♡̤̱', '♡̤͓'].map(text => [text, ['符號', '愛心', '花體']]),
+  ...['ꗯ̤', 'ꗯ̤̥', 'ꗯ̤̫', 'ꗯ̤̫͚', 'ꗯ̤̮', 'ꗯ̤̯', 'ꗯ̤̱', 'ꗯ̤̻', 'ꗯ͈̥', 'ꗯ͈̫', 'ꗯ͈̫͚', 'ꗯ͈̮', 'ꗯ͈̯', 'ꗯ͈̱'].map(text => [text, ['符號', '花體', '裝飾']]),
+].map(([text, tags]) => ({ text, tags })));
+
 // 大型字庫：只使用常見、跨平台較穩定的字元組合，並以不同的臉、動作、
 // 動物與裝飾語境建立可搜尋的顏文字。資料留在記憶體中，畫面則採分批顯示，
 // 所以手機不會因為一次繪製 50,000 個項目而變慢。
@@ -458,7 +477,23 @@ const curatedCuteKaomojis = [
   { text: '( ͡^ ͜ʖ ͡^ )', tags: ['人物', '特殊', '聊天'] },
   { text: `⠀⠀/ヽ /ヽ⠀⠀⠀\n୨୧⠀⠀⠀⠀౨ৎ　　　\n꒰ ◌´ ꒳ \`◌꒱⠀⠀\n(⠀⠀っ♡と)`, tags: ['動物', '愛心', '可愛'], multiline: true },
   // 圖片中難以辨識的缺字，改為同一類型、可正常顯示的歡呼表情。
-  { text: 'ヾ(≧▽≦)ﾉ〃', tags: ['人物', '可愛', '開心', '已修復'] }
+  { text: 'ヾ(≧▽≦)ﾉ〃', tags: ['人物', '可愛', '開心', '已修復'] },
+  // Threads 符號整理的跨平台修復版：移除會在 Google 與部分 iOS 字型疊成橫線的組合符號。
+  { text: '₊ ⤾ ◡̈', tags: ['符號', '可愛', '極簡'] },
+  { text: '𓊆❤︎𓊇', tags: ['愛心', '符號', '特殊', '已修復'] },
+  { text: '♡･', tags: ['愛心', '符號', '極簡', '已修復'] },
+  { text: '𝄞 ⨾ 𓍢 · ☘︎ ˖꙳', tags: ['符號', '裝飾', '柔和', '已修復'] },
+  { text: '⸌☻⸍꙳', tags: ['人物', '可愛', '符號', '已修復'] },
+  { text: '❤︎ 𝄢..♬', tags: ['愛心', '音樂', '符號', '已修復'] },
+  { text: '𐀪 ♡ 𐁑', tags: ['愛心', '符號', '特殊'] },
+  { text: '♡ ˖ ♡ ｡ ♡ · ♡', tags: ['愛心', '裝飾', '極簡', '已修復'] },
+  { text: 'ꗯ', tags: ['符號', '可愛', '極簡'] },
+  { text: 'ꗯ ♡ ꗯ', tags: ['符號', '愛心', '可愛', '已修復'] },
+  { text: '⋆₊˚⊹♡⋆౨ৎ˚⟡˖ ࣪୧ ‧₊˚', tags: ['愛心', '裝飾', '可愛', '已修復'] },
+  { text: '⋆˚✿˖°. ˖୨୧ ‧₊˚໒꒰´ ˘ ` ꒱ა˚₊‧', tags: ['花朵', '裝飾', '可愛', '已修復'] },
+  { text: '· ᵎᵎ ⋆౨ৎ˚⟡˖ ࣪ ♡˚ ༘ ⋆｡˚ ʚɞ ⁺˖ ⸝⸝', tags: ['符號', '裝飾', '可愛', '已修復'] },
+  { text: '⋆⁺₊. ✩🫧. ♡ ₊ ˚ ‧ ₊ ✧₊˚*♡⸝⸝', tags: ['愛心', '裝飾', '可愛', '已修復'] },
+  { text: '⋆ * .♡ *:･ﾟ. ˖ ࣪ . ⋆ * .♡ *', tags: ['愛心', '裝飾', '柔和', '已修復'] }
 ];
 data.unshift(...curatedCuteKaomojis);
 const catalogSeen = new Set(data.map(item => item.text));
@@ -699,7 +734,7 @@ async function copyMany(items) {
 function showDetails(item) {
   detailItem = item; detailKaomoji.textContent = item.text;
   detailKaomoji.classList.toggle('multiline', Boolean(item.multiline));
-  detailName.textContent = `${item.tags.slice(0, 2).join('・')} 顏文字 · 已做跨平台字元校正`;
+  detailName.textContent = `${item.tags.slice(0, 2).join('・')} 顏文字`;
   detailTags.replaceChildren(); item.tags.forEach(tag => { const chip = document.createElement('span'); chip.textContent = tag; detailTags.append(chip); });
   similarKaomojis.replaceChildren();
   data.filter(other => other.text !== item.text && other.tags.some(tag => item.tags.includes(tag))).slice(0, 6).forEach(other => similarKaomojis.append(makeToolButton(other.text, () => showDetails(other))));
@@ -843,7 +878,7 @@ function renderList() {
     const collection = fragment.querySelector('.collection-button');
     text.textContent = item.text;
     row.classList.toggle('multiline', Boolean(item.multiline));
-    fragment.querySelector('.kaomoji-tags').innerHTML = [...item.tags.slice(0, 2), '跨平台'].map(tag => `<i>${tag}</i>`).join('');
+    fragment.querySelector('.kaomoji-tags').innerHTML = item.tags.slice(0, 3).map(tag => `<i>${tag}</i>`).join('');
     copy.setAttribute('aria-label', `複製：${item.tags.slice(0, 2).join('、')} ${item.text}`);
     favorite.classList.toggle('active', favorites.includes(item.text));
     favorite.setAttribute('aria-label', favorites.includes(item.text) ? '取消收藏' : '加入收藏');
