@@ -538,6 +538,15 @@ for (let seed = 0; data.length < catalogTarget && seed < 300000; seed += 1) {
   if (style === 6) addCatalogItem(`${catalogSymbols[seed % catalogSymbols.length]}${start}${frame[0]}${face}${frame[1]}${end}${catalogSymbols[Math.floor(seed / 19) % catalogSymbols.length]}`, ['裝飾', '特殊', mood[0]]);
 }
 
+// 有些社群顏文字依賴多層「組合符號」或隱形控制字元；在 Google、iOS 或不同字型上
+// 容易變成橫槓、方塊或位置跑掉。統一轉為穩定的可複製文字版本。
+const stabilizeKaomojiText = value => value
+  .normalize('NFD')
+  .replace(/\p{M}/gu, '')
+  .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+  .normalize('NFC');
+data.forEach(item => { item.text = stabilizeKaomojiText(item.text); });
+
 const defaultCategories = [
   ['all', '全部'], ['updated', '最近更新'], ['recent', '最近使用'], ['favorites', '收藏'],
   ['動物', '動物'], ['人物', '人物'], ['手勢', '手勢'], ['愛心', '愛心'], ['符號', '符號'], ['裝飾', '裝飾'], ['more', '更多']
