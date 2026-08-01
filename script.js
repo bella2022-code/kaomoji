@@ -397,20 +397,20 @@ data.push(...[
 // 成套排版保留為完整項目，常用的單獨符號也可分開搜尋與複製。
 data.push(...[
   ['₊ ⤾ ◡̈:', ['符號', '表情', '社群']],
-  ['\u{13286}ྀི❤︎\u{13287}ྀི ⠀͛♡̷̷̷･͛', ['符號', '愛心', '裝飾', '社群']],
-  ['𝄞⨾𓍢ִ ་ ⠀ .☘︎ ˖꙳ ⸌☻ັ⸍꙳ ❤︎ 𝄢..♬ ♡ ྀི 𐀪♡𐁑', ['符號', '音樂', '愛心', '裝飾']],
+  ['\u{13286}ྀི❤︎\u{13287}ྀི ⠀͛♡̷̷̷･͛', ['符號', '愛心', '裝飾', '社群'], '〔❤︎〕 ♡'],
+  ['𝄞⨾𓍢ִ ་ ⠀ .☘︎ ˖꙳ ⸌☻ັ⸍꙳ ❤︎ 𝄢..♬ ♡ ྀི 𐀪♡𐁑', ['符號', '音樂', '愛心', '裝飾'], '𝄞 ✧ .☘︎ ˖꙳ ⸌☻⸍꙳ ❤︎ 𝄢..♬ ♡ ୨♡୧'],
   ['♡͈͓ ♡̼̫ ♡̤̜ ♡̤̹ ♡̤̮ ♡͈̮ ♡̤̥ ♡͈̥', ['符號', '愛心', '花體']],
   ['♡̤̻ ♡͈̻ ♡̤̫ ♡͈̫ ♡̤̯ ♡͈̯ ♡̤̱ ♡̤͓', ['符號', '愛心', '花體']],
   ['ꗯ̤ ꗯ̤̥ ꗯ̤̫ ꗯ̤̫͚ ꗯ̤̮ ꗯ̤̯ ꗯ̤̱ ꗯ̤̻ ꗯ͈̥', ['符號', '花體', '裝飾']],
   ['ꗯ͈̫ ꗯ͈̫͚ ꗯ͈̮ ꗯ͈̯ ꗯ͈̱', ['符號', '花體', '裝飾']],
-  ['⋆\u{1065A}₊˚⊹♡⋆౨ৎ˚⟡˖ ࣪୧ ‧₊˚', ['符號', '愛心', '裝飾']],
-  ['⋆˚✿˖°.\u{16954} ݁ ˖୨୧ ‧₊˚໒꒰ྀི´ ˘ ` ꒱ྀིა˚₊‧', ['符號', '花朵', '可愛', '裝飾']],
-  ['. ᵎᵎ ⋆౨ৎ˚⟡˖ ࣪ \u{1D717}\u{1D71A}˚ ༘ ೀ⋆｡˚ ʚɞ ⁺˖ ⸝⸝', ['符號', '可愛', '裝飾']],
+  ['⋆\u{1065A}₊˚⊹♡⋆౨ৎ˚⟡˖ ࣪୧ ‧₊˚', ['符號', '愛心', '裝飾'], '⋆୨୧₊˚⊹♡⋆୨୧˚⟡˖ ୧ ‧₊˚'],
+  ['⋆˚✿˖°.\u{16954} ݁ ˖୨୧ ‧₊˚໒꒰ྀི´ ˘ ` ꒱ྀིა˚₊‧', ['符號', '花朵', '可愛', '裝飾'], '⋆˚✿˖°.✿ ݁ ˖୨୧ ‧₊˚໒꒰´ ˘ ` ꒱ა˚₊‧'],
+  ['. ᵎᵎ ⋆౨ৎ˚⟡˖ ࣪ \u{1D717}\u{1D71A}˚ ༘ ೀ⋆｡˚ ʚɞ ⁺˖ ⸝⸝', ['符號', '可愛', '裝飾'], '. ᵎᵎ ⋆୨୧˚⟡˖ ୨୧˚ ༘ ⋆｡˚ ʚɞ ⁺˖ ⸝⸝'],
   ['⋆⁺₊. ✩🫧. ♡ ₊ ˚ ‧ ₊ ✧₊˚*ੈ♡⸝⸝', ['符號', '愛心', '星星', '裝飾']],
   ['⋆ * .♡ *:･ﾟ. ݁ ˖ ࣪ . ⋆ * .♡ * 𝐀ᩚ', ['符號', '愛心', '裝飾']],
   ...['♡͈͓', '♡̼̫', '♡̤̜', '♡̤̹', '♡̤̮', '♡͈̮', '♡̤̥', '♡͈̥', '♡̤̻', '♡͈̻', '♡̤̫', '♡͈̫', '♡̤̯', '♡͈̯', '♡̤̱', '♡̤͓'].map(text => [text, ['符號', '愛心', '花體']]),
   ...['ꗯ̤', 'ꗯ̤̥', 'ꗯ̤̫', 'ꗯ̤̫͚', 'ꗯ̤̮', 'ꗯ̤̯', 'ꗯ̤̱', 'ꗯ̤̻', 'ꗯ͈̥', 'ꗯ͈̫', 'ꗯ͈̫͚', 'ꗯ͈̮', 'ꗯ͈̯', 'ꗯ͈̱'].map(text => [text, ['符號', '花體', '裝飾']]),
-].map(([text, tags]) => ({ text, tags })));
+].map(([text, tags, safeText]) => ({ text, tags, ...(safeText ? { safeText } : {}) })));
 
 // 大型字庫：只使用常見、跨平台較穩定的字元組合，並以不同的臉、動作、
 // 動物與裝飾語境建立可搜尋的顏文字。資料留在記憶體中，畫面則採分批顯示，
@@ -516,6 +516,35 @@ const curatedCuteKaomojis = [
   { text: 'V●ᴥ●V', tags: ['動物', '狗', '可愛'] },
   { text: '┬─┬ ノ( ゜-゜ノ)', tags: ['文字', '手勢', '特殊'] }
 ];
+// 額外的穩定符號包：用於社群文案與訊息裝飾，不含會造成橫槓的組合字。
+const stableSymbolPack = [
+  ['♡', ['符號', '愛心', '極簡']], ['♥', ['符號', '愛心', '極簡']], ['❤', ['符號', '愛心', '極簡']],
+  ['❥', ['符號', '愛心', '極簡']], ['❣', ['符號', '愛心', '極簡']], ['ღ', ['符號', '愛心', '極簡']],
+  ['♡ ˚', ['符號', '愛心', '裝飾']], ['♡ ·', ['符號', '愛心', '裝飾']], ['♡ ｡', ['符號', '愛心', '裝飾']],
+  ['♡ ₊', ['符號', '愛心', '裝飾']], ['♡ ˖', ['符號', '愛心', '裝飾']], ['♡ ⊹', ['符號', '愛心', '裝飾']],
+  ['♡⌒♡', ['符號', '愛心', '可愛']], ['♡♡♡', ['符號', '愛心', '可愛']], ['♡~', ['符號', '愛心', '可愛']],
+  ['✦', ['符號', '星星', '極簡']], ['✧', ['符號', '星星', '極簡']], ['☆', ['符號', '星星', '極簡']],
+  ['★', ['符號', '星星', '極簡']], ['✩', ['符號', '星星', '極簡']], ['✪', ['符號', '星星', '極簡']],
+  ['✫', ['符號', '星星', '極簡']], ['✬', ['符號', '星星', '極簡']], ['✭', ['符號', '星星', '極簡']],
+  ['✮', ['符號', '星星', '極簡']], ['✯', ['符號', '星星', '極簡']], ['✰', ['符號', '星星', '極簡']],
+  ['✦ ˖', ['符號', '星星', '裝飾']], ['✧ ˚', ['符號', '星星', '裝飾']], ['☆ ｡', ['符號', '星星', '裝飾']],
+  ['⋆｡°✩', ['符號', '星星', '裝飾']], ['✧˖°', ['符號', '星星', '裝飾']], ['✦•┈┈•✦', ['符號', '星星', '裝飾']],
+  ['✿', ['符號', '花朵', '極簡']], ['❀', ['符號', '花朵', '極簡']], ['❁', ['符號', '花朵', '極簡']],
+  ['❃', ['符號', '花朵', '極簡']], ['❋', ['符號', '花朵', '極簡']], ['❇', ['符號', '花朵', '極簡']],
+  ['☾', ['符號', '天氣', '極簡']], ['☀', ['符號', '天氣', '極簡']], ['☁', ['符號', '天氣', '極簡']],
+  ['☂', ['符號', '天氣', '極簡']], ['☄', ['符號', '星星', '極簡']], ['☘', ['符號', '植物', '極簡']],
+  ['｡', ['符號', '裝飾', '極簡']], ['ﾟ', ['符號', '裝飾', '極簡']], ['˖', ['符號', '裝飾', '極簡']],
+  ['˗', ['符號', '裝飾', '極簡']], ['˙', ['符號', '裝飾', '極簡']], ['⋆', ['符號', '裝飾', '極簡']],
+  ['·', ['符號', '裝飾', '極簡']], ['･', ['符號', '裝飾', '極簡']], ['‧', ['符號', '裝飾', '極簡']],
+  ['…', ['符號', '裝飾', '極簡']], ['⌁', ['符號', '裝飾', '極簡']], ['⌇', ['符號', '裝飾', '極簡']],
+  ['⌒', ['符號', '裝飾', '極簡']], ['〃', ['符號', '裝飾', '極簡']], ['〜', ['符號', '裝飾', '極簡']],
+  ['〰', ['符號', '裝飾', '極簡']], ['⊹', ['符號', '裝飾', '極簡']], ['୨୧', ['符號', '愛心', '可愛']],
+  ['౨ৎ', ['符號', '愛心', '可愛']], ['ʚɞ', ['符號', '動物', '可愛']], ['꒰ა', ['符號', '裝飾', '可愛']],
+  ['໒꒱', ['符號', '裝飾', '可愛']], ['───', ['符號', '分隔線', '極簡']], ['━━━', ['符號', '分隔線', '極簡']],
+  ['┈┈┈', ['符號', '分隔線', '極簡']], ['｡･:*:･ﾟ', ['符號', '裝飾', '柔和']], ['╰┈➤', ['符號', '裝飾', '特殊']],
+  ['୨୧ ┈', ['符號', '愛心', '分隔線']], ['┈┈ ୨୧ ┈┈', ['符號', '愛心', '分隔線']]
+].map(([text, tags]) => ({ text, tags }));
+curatedCuteKaomojis.push(...stableSymbolPack);
 data.unshift(...curatedCuteKaomojis);
 const catalogSeen = new Set(data.map(item => item.text));
 const addCatalogItem = (text, tags) => {
@@ -562,14 +591,23 @@ for (let seed = 0; data.length < catalogTarget && seed < 300000; seed += 1) {
   if (style === 6) addCatalogItem(`${catalogSymbols[seed % catalogSymbols.length]}${start}${frame[0]}${face}${frame[1]}${end}${catalogSymbols[Math.floor(seed / 19) % catalogSymbols.length]}`, ['裝飾', '特殊', mood[0]]);
 }
 
-// 有些社群顏文字依賴多層「組合符號」或隱形控制字元；在 Google、iOS 或不同字型上
-// 容易變成橫槓、方塊或位置跑掉。統一轉為穩定的可複製文字版本。
-const stabilizeKaomojiText = value => value
-  .normalize('NFD')
-  .replace(/\p{M}/gu, '')
-  .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
-  .normalize('NFC');
-data.forEach(item => { item.text = stabilizeKaomojiText(item.text); });
+// 保留原版；只在系統真的畫不出字形時，才在畫面上使用 Apple 安全版。
+const glyphCanvas = document.createElement('canvas');
+glyphCanvas.width = 48; glyphCanvas.height = 48;
+const glyphContext = glyphCanvas.getContext('2d', { willReadFrequently: true });
+const glyphSignature = glyph => {
+  if (!glyphContext) return '';
+  glyphContext.clearRect(0, 0, 48, 48);
+  glyphContext.font = '32px -apple-system, BlinkMacSystemFont, "Apple Symbols", sans-serif';
+  glyphContext.textBaseline = 'middle'; glyphContext.fillText(glyph, 4, 24);
+  const pixels = glyphContext.getImageData(0, 0, 48, 48).data;
+  let count = 0; let hash = 0;
+  for (let index = 3; index < pixels.length; index += 4) if (pixels[index]) { count += 1; hash = (hash * 33 + pixels[index]) >>> 0; }
+  return `${count}:${hash}`;
+};
+const missingGlyphSignatures = new Set(['\uFFFD', '\u25A1'].map(glyphSignature));
+const hasMissingGlyph = value => [...value].some(char => !/\p{M}|\s/u.test(char) && missingGlyphSignatures.has(glyphSignature(char)));
+const getDisplayText = item => item.safeText && hasMissingGlyph(item.text) ? item.safeText : item.text;
 
 const defaultCategories = [
   ['all', '全部'], ['updated', '最近更新'], ['recent', '最近使用'], ['favorites', '收藏'],
@@ -624,6 +662,8 @@ const detailKaomoji = document.querySelector('#detail-kaomoji');
 const detailName = document.querySelector('#detail-name');
 const detailTags = document.querySelector('#detail-tags');
 const detailCopy = document.querySelector('#detail-copy');
+const detailCopyOriginal = document.querySelector('#detail-copy-original');
+const detailCopySafe = document.querySelector('#detail-copy-safe');
 const detailShare = document.querySelector('#detail-share');
 const similarKaomojis = document.querySelector('#similar-kaomojis');
 let activeCategory = 'all';
@@ -762,9 +802,11 @@ async function copyMany(items) {
 }
 
 function showDetails(item) {
-  detailItem = item; detailKaomoji.textContent = item.text;
+  detailItem = item; detailKaomoji.textContent = getDisplayText(item);
   detailKaomoji.classList.toggle('multiline', Boolean(item.multiline));
-  detailName.textContent = `${item.tags.slice(0, 2).join('・')} 顏文字`;
+  const usingSafeText = Boolean(item.safeText && getDisplayText(item) === item.safeText);
+  detailName.textContent = `${item.tags.slice(0, 2).join('・')} 顏文字${usingSafeText ? ' · 目前顯示 Apple 安全版' : ''}`;
+  detailCopySafe.hidden = !item.safeText;
   detailTags.replaceChildren(); item.tags.forEach(tag => { const chip = document.createElement('span'); chip.textContent = tag; detailTags.append(chip); });
   similarKaomojis.replaceChildren();
   data.filter(other => other.text !== item.text && other.tags.some(tag => item.tags.includes(tag))).slice(0, 6).forEach(other => similarKaomojis.append(makeToolButton(other.text, () => showDetails(other))));
@@ -906,13 +948,14 @@ function renderList() {
     const favorite = fragment.querySelector('.favorite-button');
     const details = fragment.querySelector('.details-button');
     const collection = fragment.querySelector('.collection-button');
-    text.textContent = item.text;
+    const displayText = getDisplayText(item);
+    text.textContent = displayText;
     row.classList.toggle('multiline', Boolean(item.multiline));
     fragment.querySelector('.kaomoji-tags').innerHTML = item.tags.slice(0, 3).map(tag => `<i>${tag}</i>`).join('');
-    copy.setAttribute('aria-label', `複製：${item.tags.slice(0, 2).join('、')} ${item.text}`);
+    copy.setAttribute('aria-label', `複製：${item.tags.slice(0, 2).join('、')} ${displayText}`);
     favorite.classList.toggle('active', favorites.includes(item.text));
     favorite.setAttribute('aria-label', favorites.includes(item.text) ? '取消收藏' : '加入收藏');
-    copy.addEventListener('click', () => copyItem(item.text, row));
+    copy.addEventListener('click', () => copyItem(displayText, row));
     favorite.addEventListener('click', () => toggleFavorite(item.text));
     details.addEventListener('click', () => showDetails(item));
     collection.addEventListener('click', () => addToCollection(item.text));
@@ -976,7 +1019,9 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('kaomoji-theme', dark ? 'dark' : 'light'); document.querySelector('meta[name="theme-color"]').content = dark ? '#171717' : '#fafafa';
 });
 document.querySelector('.dialog-close').addEventListener('click', () => detailsDialog.close());
-detailCopy.addEventListener('click', async () => { if (detailItem) { await copyItem(detailItem.text); detailCopy.textContent = '已複製'; window.setTimeout(() => { detailCopy.textContent = '複製'; }, 900); } });
+detailCopy.addEventListener('click', async () => { if (detailItem) { await copyItem(getDisplayText(detailItem)); detailCopy.textContent = '已複製'; window.setTimeout(() => { detailCopy.textContent = '複製顯示版'; }, 900); } });
+detailCopyOriginal.addEventListener('click', async () => { if (detailItem) { await copyItem(detailItem.text); detailCopyOriginal.textContent = '已複製原版'; window.setTimeout(() => { detailCopyOriginal.textContent = '複製原版'; }, 900); } });
+detailCopySafe.addEventListener('click', async () => { if (detailItem?.safeText) { await copyItem(detailItem.safeText); detailCopySafe.textContent = '已複製安全版'; window.setTimeout(() => { detailCopySafe.textContent = '複製 Apple 安全版'; }, 900); } });
 detailShare.addEventListener('click', async () => {
   if (!detailItem) return;
   const url = `${location.origin}${location.pathname}?q=${encodeURIComponent(detailItem.text)}`;
