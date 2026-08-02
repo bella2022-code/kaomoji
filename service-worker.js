@@ -1,5 +1,5 @@
-const CACHE = 'kaomoji-v19';
-const ASSETS = ['./', './index.html', './styles.css?v=20260801-personal-tools', './dcard-originals.js?v=20260801-dcard-full', './script.js?v=20260801-personal-tools', './manifest.webmanifest', './favicon.svg'];
+const CACHE = 'kaomoji-v23';
+const ASSETS = ['./', './index.html', './styles.css?v=20260801-compact-cards', './dcard-originals.js?v=20260801-dcard-full', './script.js?v=20260802-collection-shortcut', './manifest.webmanifest', './favicon.svg'];
 
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting())));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key)))).then(() => self.clients.claim())));
