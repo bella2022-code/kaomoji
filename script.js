@@ -1174,6 +1174,61 @@ data.push(...[
   ['ʚɞ', ['符號', '可愛', '裝飾']], ['⚀ ⚁ ⚂ ⚃ ⚄ ⚅', ['符號', '特殊', '裝飾']],
 ].map(([text, tags]) => ({ text, tags })));
 
+// 精選多行顏文字：以通用符號組成的原創小動物、日常物件與情緒圖案。
+// 不使用特定角色、品牌或具爭議的圖像。
+data.push(...[
+  { text: ` /\\_/\\\n( o.o )\n > ^ <`, tags: ['動物', '兔子', '可愛'], multiline: true },
+  { text: ` /|   |\\\n(  • • )\n(   ^   )`, tags: ['動物', '兔子', '可愛'], multiline: true },
+  { text: ` /|   |\\\n( ˶• •˶)\n /  ♡  \\`, tags: ['動物', '兔子', '愛心'], multiline: true },
+  { text: ` /|   |\\\n(  > < )\n(  /♡\\ )`, tags: ['動物', '兔子', '可愛'], multiline: true },
+  { text: ` /|   |\\\n( -.- ) zZ\n(  ___ )`, tags: ['動物', '兔子', '晚安'], multiline: true },
+  { text: `  /| |\\\n ( • • )\n /  =  \\`, tags: ['動物', '兔子', '可愛'], multiline: true },
+  { text: ` /|   |\\\n(  ˘ ˘ )\n/  づ♡づ \\`, tags: ['動物', '兔子', '愛心'], multiline: true },
+  { text: `  ✿ /| |\\\n   ( • • )\n   /  ♡ \\`, tags: ['動物', '兔子', '花朵'], multiline: true },
+  { text: `  /|   |\\\n (  • • )ノ\n  /   \\`, tags: ['動物', '兔子', '打招呼'], multiline: true },
+  { text: ` /|   |\\\n(  ◕ ◕ )\n(   ᴗ   )`, tags: ['動物', '兔子', '可愛'], multiline: true },
+  { text: ` /\\_/\\\n(  •ω• )\n(  ♡ ♡ )`, tags: ['動物', '貓', '愛心'], multiline: true },
+  { text: ` /\\_/\\\n( -.- ) zZ\n(  ___ )`, tags: ['動物', '貓', '晚安'], multiline: true },
+  { text: ` /\\_/\\\n( • • )ノ\n(  ω  )`, tags: ['動物', '貓', '打招呼'], multiline: true },
+  { text: ` /\\_/\\\n( > < )\n(  ▽  )`, tags: ['動物', '貓', '生氣'], multiline: true },
+  { text: ` / \\__\n(    @\\___\n /         O`, tags: ['動物', '狗', '可愛'], multiline: true },
+  { text: ` / \\__\n(  • • )\n(   ᴗ  )`, tags: ['動物', '狗', '可愛'], multiline: true },
+  { text: ` /     \\\n(  • •  )\n(   ᴗ   )`, tags: ['動物', '狗', '可愛'], multiline: true },
+  { text: ` ʕ  •ᴥ•  ʔ\n(    ♡    )`, tags: ['動物', '熊', '愛心'], multiline: true },
+  { text: ` ʕ -ᴥ- ʔ\n(   zZ   )`, tags: ['動物', '熊', '晚安'], multiline: true },
+  { text: `  ,_\n (o>\n //\\\n V_/_`, tags: ['動物', '鳥', '可愛'], multiline: true },
+  { text: `  _~_\n (o o)\n / V \\\n/(   )\\`, tags: ['動物', '鳥', '可愛'], multiline: true },
+  { text: `  __\n<(o )\n (  )`, tags: ['動物', '鳥', '可愛'], multiline: true },
+  { text: `  ><>
+<><`, tags: ['動物', '魚', '可愛'], multiline: true },
+  { text: `  ___\n /   \\\n(  o  )\n \\___/`, tags: ['動物', '烏龜', '可愛'], multiline: true },
+  { text: ` /\\   /\\\n(  • • )\n(   ^   )`, tags: ['動物', '狐狸', '可愛'], multiline: true },
+  { text: `  (˶• •˶)\n (   ω   )\n  /     \\`, tags: ['動物', '豬', '可愛'], multiline: true },
+  { text: `  ('' )\n ( • • )\n(  ᴗ  )`, tags: ['動物', '羊', '可愛'], multiline: true },
+  { text: ` /\\___/\\\n(  o o )\n(   =  )`, tags: ['動物', '老鼠', '可愛'], multiline: true },
+  { text: `  () ()\n (  •• )\n /  ᴗ  \\`, tags: ['動物', '老鼠', '可愛'], multiline: true },
+  { text: `  \\ | /\n -- ✿ --\n  / | \\`, tags: ['花朵', '裝飾', '可愛'], multiline: true },
+  { text: `  \\ | /\n --✿--\n   |\n _|_|_`, tags: ['花朵', '裝飾', '可愛'], multiline: true },
+  { text: ` .-.-.\n( ♡ ♡ )\n \\  ♡ /\n  \`---\``, tags: ['愛心', '文字', '可愛'], multiline: true },
+  { text: ` .----.\n | ♡  |\n |----|\n |____|`, tags: ['愛心', '文字', '可愛'], multiline: true },
+  { text: `   *\n *   *\n   *\n *   *`, tags: ['星星', '裝飾', '極簡'], multiline: true },
+  { text: `  _..._\n /     \\\n|  ☾   |\n \\_..._/`, tags: ['天氣', '晚安', '可愛'], multiline: true },
+  { text: `  .--.\n (    )\n(______)`, tags: ['天氣', '柔和', '可愛'], multiline: true },
+  { text: `  .--.\n (    )\n(______)\n  .  .`, tags: ['天氣', '難過', '可愛'], multiline: true },
+  { text: ` \\ | /\n-- ☀ --\n / | \\`, tags: ['天氣', '早安', '可愛'], multiline: true },
+  { text: `   /\\\n  /  \\\n /____\\\n |  _ |\n |____|`, tags: ['文字', '特殊', '可愛'], multiline: true },
+  { text: `  ( (\n   ) )\n........\n|      |]\n\\______/`, tags: ['食物', '聊天', '可愛'], multiline: true },
+  { text: `  .-^-.\n /     \\\n|  ♡  |\n|_____|`, tags: ['食物', '恭喜', '可愛'], multiline: true },
+  { text: ` .-.\n( o o )\n|  ^  |\n'---'`, tags: ['人物', '特殊', '可愛'], multiline: true },
+  { text: ` ♡   ♡\n  ♡ ♡\n   ♡`, tags: ['愛心', '裝飾', '可愛'], multiline: true },
+  { text: `  ✿ ✿\n   \\/\n   ||\n  /__\\`, tags: ['花朵', '裝飾', '可愛'], multiline: true },
+  { text: ` \\  / \n  \\/  \n  /\\  \n /  \\ `, tags: ['手勢', '可愛', '特殊'], multiline: true },
+  { text: `  |\\ \n  | \\__\n  |    )\n  |___/`, tags: ['手勢', '加油', '特殊'], multiline: true },
+  { text: ` .-----.\n| ^   ^ |\n|   ᴗ   |\n '-----'`, tags: ['人物', '開心', '可愛'], multiline: true },
+  { text: ` .-----.\n| T   T |\n|   ︿   |\n '-----'`, tags: ['人物', '哭', '可愛'], multiline: true },
+  { text: `  z Z\n ┌─────┐\n | -.- |\n └─────┘`, tags: ['文字', '晚安', '可愛'], multiline: true },
+].map(item => ({ ...item, source: 'multi-line-safe' })));
+
 renderCategories();
 renderFilters();
 renderPersonalPanel();
