@@ -683,6 +683,9 @@ const personalPanel = document.querySelector('#personal-panel');
 const toolTabs = [...document.querySelectorAll('.tool-tab')];
 const recentCount = document.querySelector('#recent-count');
 const themeToggle = document.querySelector('#theme-toggle');
+const settingsToggle = document.querySelector('#settings-toggle');
+const settingsPanel = document.querySelector('#settings-panel');
+const retentionOptions = document.querySelector('#retention-options');
 const detailsDialog = document.querySelector('#details-dialog');
 const detailKaomoji = document.querySelector('#detail-kaomoji');
 const detailName = document.querySelector('#detail-name');
@@ -792,7 +795,7 @@ function renderPersonalPanel() {
   pruneRecents();
   recentCount.textContent = recents.length;
   if (personalView === 'recent') {
-    const label = document.createElement('p'); label.textContent = `保留最近 ${preferences.recentRetentionHours} 小時；點一下即可儲存到收藏分類。`; personalPanel.append(label);
+    const label = document.createElement('p'); label.className = 'recent-hint'; label.textContent = `保留最近 ${preferences.recentRetentionHours} 小時；點一下即可儲存到收藏分類。`; personalPanel.append(label);
     if (!recents.length) { const note = document.createElement('p'); note.textContent = '你複製過的顏文字會出現在這裡。'; personalPanel.append(note); return; }
     recents.slice(0, 14).forEach(text => personalPanel.append(makeToolButton(text, () => addToCollection(text), 'recent-chip')));
   }
@@ -812,16 +815,28 @@ function renderPersonalPanel() {
       personalPanel.append(group);
     });
   }
-  if (personalView === 'preferences') {
-    const label = document.createElement('p'); label.textContent = '最近使用保留時間'; personalPanel.append(label);
-    [1, 6, 24, 72, 168].forEach(hours => {
-      const unit = hours === 1 ? '1 小時' : hours < 24 ? `${hours} 小時` : `${hours / 24} 天`;
-      personalPanel.append(makeToolButton(unit, () => {
-        preferences.recentRetentionHours = hours; pruneRecents(); save(); renderPersonalPanel(); renderList();
-      }, preferences.recentRetentionHours === hours ? 'primary-tool' : ''));
-    });
-  }
 }
+
+function renderSettings() {
+  retentionOptions.replaceChildren();
+  [1, 6, 24, 72, 168].forEach(hours => {
+    const unit = hours === 1 ? '1 小時' : hours < 24 ? `${hours} 小時` : `${hours / 24} 天`;
+    retentionOptions.append(makeToolButton(unit, () => {
+      preferences.recentRetentionHours = hours; pruneRecents(); save(); renderSettings(); renderPersonalPanel(); renderList();
+    }, preferences.recentRetentionHours === hours ? 'active' : ''));
+  });
+}
+
+settingsToggle.addEventListener('click', event => {
+  event.stopPropagation();
+  const opening = settingsPanel.hidden;
+  settingsPanel.hidden = !opening;
+  settingsToggle.setAttribute('aria-expanded', String(opening));
+  if (opening) renderSettings();
+});
+settingsPanel.addEventListener('click', event => event.stopPropagation());
+document.addEventListener('click', () => { settingsPanel.hidden = true; settingsToggle.setAttribute('aria-expanded', 'false'); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape') { settingsPanel.hidden = true; settingsToggle.setAttribute('aria-expanded', 'false'); } });
 
 function createCollection() {
   const name = prompt('資料夾名稱（例如：聊天、遊戲、日常）')?.trim();
@@ -962,6 +977,15 @@ function renderCategories() {
     });
     button.addEventListener('pointercancel', () => { window.clearTimeout(touchTimer); touchReordering = false; draggedCategory = null; dragOverCategory = null; dropAfterCategory = false; renderCategories(); });
     categoryEl.append(button);
+    if (key === 'frequent') {
+      const addCollection = document.createElement('button');
+      addCollection.type = 'button'; addCollection.className = 'category-add-collection';
+      addCollection.textContent = '＋ 新增收藏資料夾';
+      addCollection.title = '建立可自行命名的收藏分類';
+      addCollection.hidden = categoryReorderMode;
+      addCollection.addEventListener('click', createCollection);
+      categoryEl.append(addCollection);
+    }
   });
   saveCategoryOrder();
 }
