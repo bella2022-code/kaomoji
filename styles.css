@@ -141,9 +141,9 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
 .kaomoji-copy { width: 100%; min-height: 48px; display: grid; place-items: center; border: 0; background: transparent; color: var(--text); padding: 5px 26px 5px 8px; text-align: center; transition: background 200ms ease-out; }
 .kaomoji-copy:hover { background: #fdfdfd; }
 .kaomoji-main { max-width: 100%; overflow: hidden; font-size: clamp(15px, 1.35vw, 19px); letter-spacing: .01em; text-overflow: ellipsis; white-space: nowrap; }
-.kaomoji-row.multiline { grid-column: span 2; min-height: 96px; }
-.kaomoji-row.multiline .kaomoji-copy { min-height: 96px; padding: 7px 30px 7px 12px; }
-.kaomoji-row.multiline .kaomoji-main { overflow: visible; font-size: 14px; line-height: 1.25; text-overflow: clip; white-space: pre; }
+.kaomoji-row.multiline { min-height: 76px; }
+.kaomoji-row.multiline .kaomoji-copy { min-height: 76px; padding: 5px 28px 5px 8px; }
+.kaomoji-row.multiline .kaomoji-main { overflow: visible; font-size: 13px; line-height: 1.08; text-overflow: clip; white-space: pre; }
 .kaomoji-tags { display: none; }
 .kaomoji-row:hover .kaomoji-copy { color: var(--text); }
 .kaomoji-row:hover .kaomoji-text { display: none; }
@@ -207,7 +207,7 @@ h1 { margin: 0; font-size: clamp(36px, 5vw, 55px); font-weight: 700; letter-spac
   .list-section { padding-top: 25px; }
   .kaomoji-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
   .kaomoji-row, .kaomoji-copy { min-height: 48px; }
-  .kaomoji-row.multiline, .kaomoji-row.multiline .kaomoji-copy { grid-column: 1 / -1; min-height: 96px; }
+  .kaomoji-row.multiline, .kaomoji-row.multiline .kaomoji-copy { grid-column: auto; min-height: 76px; }
   .kaomoji-main { font-size: 17px; }
   .kaomoji-tags { display: none; }
   .favorite-button { opacity: 1; }
