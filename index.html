@@ -11,17 +11,26 @@
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <title>顏文字 · Kaomoji</title>
-    <link rel="stylesheet" href="./styles.css?v=20260801-personal-tools" />
+    <link rel="stylesheet" href="./styles.css?v=20260801-compact-cards" />
   </head>
   <body>
     <header class="site-header">
       <div class="header-content">
         <a class="logo" href="#top" aria-label="顏文字首頁">顏文字<span>·</span></a>
-        <label class="header-search" for="search-input">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
-          <input id="search-input" type="search" placeholder="搜尋" autocomplete="off" />
-        </label>
-        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" title="切換深色模式">◐</button>
+        <div class="header-actions">
+          <label class="header-search" for="search-input">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 4 4"></path></svg>
+            <input id="search-input" type="search" placeholder="搜尋" autocomplete="off" />
+          </label>
+          <button id="settings-toggle" class="header-icon-button" type="button" aria-label="偏好設定" title="偏好設定" aria-expanded="false" aria-controls="settings-panel">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.42 1.42-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1 1.55v.09h-2v-.09a1.7 1.7 0 0 0-1-1.55 1.7 1.7 0 0 0-1.88.34l-.06.06-1.42-1.42.06-.06A1.7 1.7 0 0 0 9.48 15a1.7 1.7 0 0 0-1.55-1H7.8v-2h.13a1.7 1.7 0 0 0 1.55-1 1.7 1.7 0 0 0-.34-1.88l-.06-.06L10.5 7.64l.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1-1.55V6.4h2v.09a1.7 1.7 0 0 0 1 1.55 1.7 1.7 0 0 0 1.88-.34l.06-.06 1.42 1.42-.06.06A1.7 1.7 0 0 0 19.4 11a1.7 1.7 0 0 0 1.55 1h.13v2h-.13a1.7 1.7 0 0 0-1.55 1Z"></path></svg>
+          </button>
+          <button id="theme-toggle" class="theme-toggle" type="button" aria-label="切換深色模式" title="切換深色模式">◐</button>
+          <div id="settings-panel" class="settings-panel" hidden>
+            <p>偏好設定</p><span>最近使用保留時間</span>
+            <div id="retention-options" class="retention-options"></div>
+          </div>
+        </div>
       </div>
     </header>
 
@@ -54,7 +63,6 @@
         <div class="tool-tabs" role="tablist" aria-label="個人顏文字">
           <button type="button" class="tool-tab active" data-personal-view="recent">最近使用 <span id="recent-count">0</span></button>
           <button type="button" class="tool-tab" data-personal-view="collections">收藏分類</button>
-          <button type="button" class="tool-tab" data-personal-view="preferences">偏好設定</button>
         </div>
         <div id="personal-panel" class="personal-panel"></div>
       </section>
@@ -104,6 +112,6 @@
     </dialog>
 
     <script src="./dcard-originals.js?v=20260801-dcard-full"></script>
-    <script src="./script.js?v=20260801-personal-tools"></script>
+    <script src="./script.js?v=20260802-collection-shortcut"></script>
   </body>
 </html>
